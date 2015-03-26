@@ -1,14 +1,13 @@
 ## e000_tabla_clinicos24_03.r
 ## 2015-03-26 julenmendieta92@gmail.com
-## Script sin uso. Es el script completo del análisis de los datos clínicos del que he extraido los cripts útiles
-
+## Script completo del análisis de los datos clínicos
 date ()
 Sys.info ()[c("nodename", "user")]
 commandArgs ()
 rm (list = ls ())
 R.version.string ##"R version 3.1.2 (2014-10-31)"
 
-setwd ("/home/jmendieta/Documents/untitled folder")
+setwd ("/home/jmendieta/Documents/revision_mirnas/datos/raw/clinical")
 
 ficheros <- dir (pattern = "clinical_patient", recursive= TRUE)  #Guardamos en ficheros el stream de cada carpeta y los ficheros que contiene
 ficheros
@@ -108,7 +107,7 @@ for (fi in ficheros) {
 summary(tablist)
 
 #Guardamos en excel
-setwd ("/home/jmendieta/Documents")
+setwd ("/home/jmendieta/Documents/revision_mirnas/datos/procesados")
 
 library (xlsx)
 
@@ -162,3 +161,6 @@ for (fi in ficheros) {
   } 
 }
 saveWorkbook( wb )
+
+
+help(merge)
