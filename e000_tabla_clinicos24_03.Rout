@@ -1,0 +1,1618 @@
+
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## e000_tabla_clinicos24_03.r
+> ## 2015-03-26 julenmendieta92@gmail.com
+> ## Script completo del análisis de los datos clínicos
+> date ()
+[1] "Thu Mar 26 16:58:58 2015"
+> Sys.info ()[c("nodename", "user")]
+     nodename          user 
+"practicas05"   "jmendieta" 
+> commandArgs ()
+[1] "/usr/lib/R/bin/exec/R"      "-f"                        
+[3] "e000_tabla_clinicos24_03.r" "--restore"                 
+[5] "--save"                     "--no-readline"             
+> rm (list = ls ())
+> R.version.string ##"R version 3.1.2 (2014-10-31)"
+[1] "R version 3.1.2 (2014-10-31)"
+> 
+> setwd ("/home/jmendieta/Documents/revision_mirnas/datos/raw/clinical")
+> 
+> ficheros <- dir (pattern = "clinical_patient", recursive= TRUE)  #Guardamos en ficheros el stream de cada carpeta y los ficheros que contiene
+> ficheros
+ [1] "genome.wustl.edu_LAML.bio.Level_2.0.1.0/nationwidechildrens.org_clinical_patient_laml.txt"        
+ [2] "nationwidechildrens.org_ACC.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_acc.txt"  
+ [3] "nationwidechildrens.org_BLCA.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_blca.txt"
+ [4] "nationwidechildrens.org_BRCA.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_brca.txt"
+ [5] "nationwidechildrens.org_CESC.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_cesc.txt"
+ [6] "nationwidechildrens.org_CHOL.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_chol.txt" 
+ [7] "nationwidechildrens.org_COAD.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_coad.txt"
+ [8] "nationwidechildrens.org_DLBC.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_dlbc.txt"
+ [9] "nationwidechildrens.org_ESCA.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_esca.txt"
+[10] "nationwidechildrens.org_GBM.bio.Level_2.0.23.0/nationwidechildrens.org_clinical_patient_gbm.txt"  
+[11] "nationwidechildrens.org_HNSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_hnsc.txt"
+[12] "nationwidechildrens.org_KICH.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kich.txt"
+[13] "nationwidechildrens.org_KIRC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kirc.txt"
+[14] "nationwidechildrens.org_KIRP.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_kirp.txt"
+[15] "nationwidechildrens.org_LGG.bio.Level_2.0.27.0/nationwidechildrens.org_clinical_patient_lgg.txt"  
+[16] "nationwidechildrens.org_LIHC.bio.Level_2.0.35.0/nationwidechildrens.org_clinical_patient_lihc.txt"
+[17] "nationwidechildrens.org_LUSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_lusc.txt"
+[18] "nationwidechildrens.org_MESO.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_meso.txt"
+[19] "nationwidechildrens.org_OV.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_ov.txt"    
+[20] "nationwidechildrens.org_PAAD.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_paad.txt"
+[21] "nationwidechildrens.org_PCPG.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_pcpg.txt"
+[22] "nationwidechildrens.org_PRAD.bio.Level_2.0.33.0/nationwidechildrens.org_clinical_patient_prad.txt"
+[23] "nationwidechildrens.org_READ.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_read.txt"
+[24] "nationwidechildrens.org_SARC.bio.Level_2.0.28.0/nationwidechildrens.org_clinical_patient_sarc.txt"
+[25] "nationwidechildrens.org_SKCM.bio.Level_2.0.31.0/nationwidechildrens.org_clinical_patient_skcm.txt"
+[26] "nationwidechildrens.org_STAD.bio.Level_2.0.29.0/nationwidechildrens.org_clinical_patient_stad.txt"
+[27] "nationwidechildrens.org_TGCT.bio.Level_2.0.12.0/nationwidechildrens.org_clinical_patient_tgct.txt"
+[28] "nationwidechildrens.org_THCA.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_thca.txt"
+[29] "nationwidechildrens.org_THYM.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_thym.txt" 
+[30] "nationwidechildrens.org_UCEC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_ucec.txt"
+[31] "nationwidechildrens.org_UCS.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_ucs.txt"  
+[32] "nationwidechildrens.org_UVM.bio.Level_2.0.11.0/nationwidechildrens.org_clinical_patient_uvm.txt"  
+> length (ficheros)
+[1] 32
+> #Igual hay que crear una matriz de length(ficheros) x 8 (las 8 columnas q interesan de momento)
+> 
+> 
+> tablist <- list ()
+> lnombres <- list ()
+> for (fi in ficheros) {
++   print (fi)
++   
++   nombres <- unlist (strsplit (readLines (fi)[1], split = "\t"))
++   datos0 <- read.table (fi, header = TRUE, sep = "\t", quote = "", col.names = nombres, as.is = TRUE, 
++                         na.strings = c("[Not Available]", "[Not Applicable]", "[Not Evaluated]", "[Unknown]"), skip = 3)
++   
++   datos0[1:3,]
++   orden <- order (colnames (datos0))
++   colnames (datos0)[orden]
++   datos0 <- datos0[,orden]
++   
++   #
++   table (sapply (datos0, class))
++   #Con esto leemos todo lo que hay en el fichero
++   todo.na <- apply (is.na (datos0), 2, all)
++   table (todo.na)
++   datos0 <- datos0[,!todo.na]  #Quitamos los datos en los que todo sea NA
++   
++   lon <- apply (datos0, 2, function (x) length (setdiff (unique (x), NA)))  #Guardamos en lon cuantos datos diferentes hay en cada cabecera
++   table (lon)
++   
++   #Antes de nada copiamos la columna de genero no sea que se borre al aplicar el filtro
++   genero <- datos0["gender"]
++   #Eliminamos las cabeceras que tengan menores de 1 y mayores o iguales de 10 
++   datos0 <- datos0[,(lon > 1  & lon < 10)] 
++   #Y nos aseguramos de que la cebecera de genero permanezca
++   datos0["gender"] <- genero
++   
++   datos0[1:3,]
++   t(t (colnames (datos0)))  #Muestra una lista con las columnas que hay en datos0
++   
++   
++   
++   #El objetivo de esto es quitar lo de sindatos si hay muchos de esos valores 
++   mitad <- length(rownames(datos0))/2
++   
++   #Con esto nos aseguramos de quitar las columnas donde faltan datos en muchos campos, pero a la hora de guardarlas no aparecera todo como NA, lo cual es mejor
++   for (ca in colnames(datos0)) {
++     cantidadSinDatos <- table(datos0$ca == "NA")  #Esto nos da cuantos no cumplen esto
++     try(if (cantidadSinDatos[1] < mitad | length(cantidadSinDatos) == 0) (datos0$ca <- NULL), silent = FALSE)  #Si la cantidad de datos reales es inferior a la mitad de datos totales borramos la columna
++     #A su vez, si la tabla es de longitud cero es que todos los datos son NA, por lo que también borramos
++     #Con esto vamos quitando donde se encuentre sindatos en un % mayor al 50%. Ponemos try por si no se encuentra ninguna vez sindatos
++   }
++   
++   nombres <- colnames(datos0)   #Con esto miramos todas las cabeceras que han permanecido hasta ahora
++   lnombres[[fi]] <- nombres  #Guardamos las cabeceras que hay asociadas al nombre del fichero en lnombres
++   
++ }
+[1] "genome.wustl.edu_LAML.bio.Level_2.0.1.0/nationwidechildrens.org_clinical_patient_laml.txt"
+[1] "nationwidechildrens.org_ACC.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_acc.txt"
+[1] "nationwidechildrens.org_BLCA.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_blca.txt"
+[1] "nationwidechildrens.org_BRCA.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_brca.txt"
+[1] "nationwidechildrens.org_CESC.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_cesc.txt"
+[1] "nationwidechildrens.org_CHOL.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_chol.txt"
+[1] "nationwidechildrens.org_COAD.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_coad.txt"
+[1] "nationwidechildrens.org_DLBC.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_dlbc.txt"
+[1] "nationwidechildrens.org_ESCA.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_esca.txt"
+[1] "nationwidechildrens.org_GBM.bio.Level_2.0.23.0/nationwidechildrens.org_clinical_patient_gbm.txt"
+[1] "nationwidechildrens.org_HNSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_hnsc.txt"
+[1] "nationwidechildrens.org_KICH.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kich.txt"
+[1] "nationwidechildrens.org_KIRC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kirc.txt"
+[1] "nationwidechildrens.org_KIRP.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_kirp.txt"
+[1] "nationwidechildrens.org_LGG.bio.Level_2.0.27.0/nationwidechildrens.org_clinical_patient_lgg.txt"
+[1] "nationwidechildrens.org_LIHC.bio.Level_2.0.35.0/nationwidechildrens.org_clinical_patient_lihc.txt"
+[1] "nationwidechildrens.org_LUSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_lusc.txt"
+[1] "nationwidechildrens.org_MESO.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_meso.txt"
+[1] "nationwidechildrens.org_OV.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_ov.txt"
+[1] "nationwidechildrens.org_PAAD.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_paad.txt"
+[1] "nationwidechildrens.org_PCPG.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_pcpg.txt"
+[1] "nationwidechildrens.org_PRAD.bio.Level_2.0.33.0/nationwidechildrens.org_clinical_patient_prad.txt"
+[1] "nationwidechildrens.org_READ.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_read.txt"
+[1] "nationwidechildrens.org_SARC.bio.Level_2.0.28.0/nationwidechildrens.org_clinical_patient_sarc.txt"
+[1] "nationwidechildrens.org_SKCM.bio.Level_2.0.31.0/nationwidechildrens.org_clinical_patient_skcm.txt"
+[1] "nationwidechildrens.org_STAD.bio.Level_2.0.29.0/nationwidechildrens.org_clinical_patient_stad.txt"
+[1] "nationwidechildrens.org_TGCT.bio.Level_2.0.12.0/nationwidechildrens.org_clinical_patient_tgct.txt"
+[1] "nationwidechildrens.org_THCA.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_thca.txt"
+[1] "nationwidechildrens.org_THYM.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_thym.txt"
+[1] "nationwidechildrens.org_UCEC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_ucec.txt"
+[1] "nationwidechildrens.org_UCS.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_ucs.txt"
+[1] "nationwidechildrens.org_UVM.bio.Level_2.0.11.0/nationwidechildrens.org_clinical_patient_uvm.txt"
+> 
+> 
+> nu <- sort (unique (unlist (lnombres)))   #Guardamos en una lista todas las cabeceras de columnas que hay sin repetirlas
+> mat <- matrix (NA, nrow = length (nu), ncol = length (ficheros))  #Creamos una matriz vacia con numero de filas igual a cabeceras posibles y en las columnas el nombre del fichero
+> rownames (mat) <- nu  #Llamamos a las filas de mat como las cabeceras
+> colnames (mat) <- ficheros  #A las columnas como los ficheros
+> #Con el bucle guardamos un T o F dependiendo de si en el fichero hay una cabecera que se llame como fila[cabecera] de la matriz
+> for (fi in ficheros) {
++   mat[,fi] <- rownames (mat) %in% lnombres[[fi]]
++ }
+> mat[1:3,]
+                                  genome.wustl.edu_LAML.bio.Level_2.0.1.0/nationwidechildrens.org_clinical_patient_laml.txt
+ablation_embolization_tx_adjuvant                                                                                     FALSE
+ajcc_clinical_tumor_stage                                                                                             FALSE
+ajcc_metastasis_clinical_cm                                                                                           FALSE
+                                  nationwidechildrens.org_ACC.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_acc.txt
+ablation_embolization_tx_adjuvant                                                                                           FALSE
+ajcc_clinical_tumor_stage                                                                                                   FALSE
+ajcc_metastasis_clinical_cm                                                                                                 FALSE
+                                  nationwidechildrens.org_BLCA.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_blca.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_BRCA.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_brca.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_CESC.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_cesc.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_CHOL.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_chol.txt
+ablation_embolization_tx_adjuvant                                                                                            FALSE
+ajcc_clinical_tumor_stage                                                                                                    FALSE
+ajcc_metastasis_clinical_cm                                                                                                  FALSE
+                                  nationwidechildrens.org_COAD.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_coad.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_DLBC.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_dlbc.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_ESCA.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_esca.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                    TRUE
+                                  nationwidechildrens.org_GBM.bio.Level_2.0.23.0/nationwidechildrens.org_clinical_patient_gbm.txt
+ablation_embolization_tx_adjuvant                                                                                           FALSE
+ajcc_clinical_tumor_stage                                                                                                   FALSE
+ajcc_metastasis_clinical_cm                                                                                                 FALSE
+                                  nationwidechildrens.org_HNSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_hnsc.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_KICH.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kich.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                    TRUE
+                                  nationwidechildrens.org_KIRC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kirc.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                    TRUE
+                                  nationwidechildrens.org_KIRP.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_kirp.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                    TRUE
+                                  nationwidechildrens.org_LGG.bio.Level_2.0.27.0/nationwidechildrens.org_clinical_patient_lgg.txt
+ablation_embolization_tx_adjuvant                                                                                           FALSE
+ajcc_clinical_tumor_stage                                                                                                   FALSE
+ajcc_metastasis_clinical_cm                                                                                                 FALSE
+                                  nationwidechildrens.org_LIHC.bio.Level_2.0.35.0/nationwidechildrens.org_clinical_patient_lihc.txt
+ablation_embolization_tx_adjuvant                                                                                              TRUE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_LUSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_lusc.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_MESO.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_meso.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_OV.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_ov.txt
+ablation_embolization_tx_adjuvant                                                                                         FALSE
+ajcc_clinical_tumor_stage                                                                                                 FALSE
+ajcc_metastasis_clinical_cm                                                                                               FALSE
+                                  nationwidechildrens.org_PAAD.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_paad.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_PCPG.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_pcpg.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_PRAD.bio.Level_2.0.33.0/nationwidechildrens.org_clinical_patient_prad.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_READ.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_read.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_SARC.bio.Level_2.0.28.0/nationwidechildrens.org_clinical_patient_sarc.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_SKCM.bio.Level_2.0.31.0/nationwidechildrens.org_clinical_patient_skcm.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_STAD.bio.Level_2.0.29.0/nationwidechildrens.org_clinical_patient_stad.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_TGCT.bio.Level_2.0.12.0/nationwidechildrens.org_clinical_patient_tgct.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                    TRUE
+                                  nationwidechildrens.org_THCA.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_thca.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_THYM.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_thym.txt
+ablation_embolization_tx_adjuvant                                                                                            FALSE
+ajcc_clinical_tumor_stage                                                                                                    FALSE
+ajcc_metastasis_clinical_cm                                                                                                  FALSE
+                                  nationwidechildrens.org_UCEC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_ucec.txt
+ablation_embolization_tx_adjuvant                                                                                             FALSE
+ajcc_clinical_tumor_stage                                                                                                     FALSE
+ajcc_metastasis_clinical_cm                                                                                                   FALSE
+                                  nationwidechildrens.org_UCS.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_ucs.txt
+ablation_embolization_tx_adjuvant                                                                                           FALSE
+ajcc_clinical_tumor_stage                                                                                                   FALSE
+ajcc_metastasis_clinical_cm                                                                                                 FALSE
+                                  nationwidechildrens.org_UVM.bio.Level_2.0.11.0/nationwidechildrens.org_clinical_patient_uvm.txt
+ablation_embolization_tx_adjuvant                                                                                           FALSE
+ajcc_clinical_tumor_stage                                                                                                    TRUE
+ajcc_metastasis_clinical_cm                                                                                                  TRUE
+> dim (mat)
+[1] 453  32
+> table (rowSums (mat))  #Esto nos muestra cuantas cabeceras hay solo en x ficheros (cuantas en 1, cuantas en 2, cuantas en 4 etc.)
+
+  1   2   3   4   5   6   8   9  10  11  12  14  16  18  19  20  21  22  23  26 
+346  46  17   7   3   2   1   1   4   1   2   1   2   3   2   2   1   1   1   1 
+ 30  31  32 
+  1   6   2 
+> 
+> colnames (mat) <- NULL
+> touse <- rowSums (mat) == length(ficheros) #Guardamos solo las cabeceras que esten en todos losficheros
+> touse
+             ablation_embolization_tx_adjuvant 
+                                         FALSE 
+                     ajcc_clinical_tumor_stage 
+                                         FALSE 
+                   ajcc_metastasis_clinical_cm 
+                                         FALSE 
+                 ajcc_metastasis_pathologic_pm 
+                                         FALSE 
+                        ajcc_nodes_clinical_cn 
+                                         FALSE 
+                      ajcc_nodes_pathologic_pn 
+                                         FALSE 
+                   ajcc_pathologic_tumor_stage 
+                                         FALSE 
+              ajcc_path_pt_incidental_prostate 
+                                         FALSE 
+                          ajcc_staging_edition 
+                                         FALSE 
+                        ajcc_tumor_clinical_ct 
+                                         FALSE 
+                      ajcc_tumor_pathologic_pt 
+                                         FALSE 
+                 alcohol_consumption_frequency 
+                                         FALSE 
+                   alcohol_consumption_per_day 
+                                         FALSE 
+                    alcohol_exposure_intensity 
+                                         FALSE 
+                    alcohol_history_documented 
+                                         FALSE 
+                allergy_animals_insects_dx_age 
+                                         FALSE 
+          allergy_animals_insects_dx_indicator 
+                                         FALSE 
+                           allergy_food_dx_age 
+                                         FALSE 
+                     allergy_food_dx_indicator 
+                                         FALSE 
+            alpha_fetoprotien_norm_range_upper 
+                                         FALSE 
+                 anatomic_neoplasm_subdivision 
+                                         FALSE 
+           anatomic_neoplasm_subdivision_other 
+                                         FALSE 
+                    anatomic_organ_subdivision 
+                                         FALSE 
+                          antireflux_treatment 
+                                         FALSE 
+                     antireflux_treatment_type 
+                                         FALSE 
+                   asbestos_exposure_age_first 
+                                         FALSE 
+                    asbestos_exposure_age_last 
+                                         FALSE 
+                      asbestos_exposure_source 
+                                         FALSE 
+                        asbestos_exposure_type 
+                                         FALSE 
+                asthma_eczema_allergy_first_dx 
+                                         FALSE 
+                                 atra_exposure 
+                                         FALSE 
+                      atypical_mitotic_figures 
+                                         FALSE 
+                       axillary_staging_method 
+                                         FALSE 
+                            barretts_esophagus 
+                                         FALSE 
+                             basophils_count.1 
+                                         FALSE 
+                        b_cell_genotype_method 
+                                         FALSE 
+                  bcg_complete_response_months 
+                                         FALSE 
+             bcg_tx_90_days_prior_to_resection 
+                                         FALSE 
+                      bcg_tx_complete_response 
+                                         FALSE 
+            bcg_tx_induction_courses_indicator 
+                                         FALSE 
+          bcg_tx_maintenance_courses_indicator 
+                                         FALSE 
+               bilateral_diagnosis_timing_type 
+                                         FALSE 
+              bilirubin_total_norm_range_lower 
+                                         FALSE 
+              bilirubin_total_norm_range_upper 
+                                         FALSE 
+              biochemical_recurrence_indicator 
+                                         FALSE 
+                                 birth_country 
+                                         FALSE 
+                  bone_marrow_biopsy_performed 
+                                         FALSE 
+                       bone_marrow_involvement 
+                                         FALSE 
+                  bone_marrow_sample_histology 
+                                         FALSE 
+                             bone_scan_results 
+                                         FALSE 
+                            brachytherapy_type 
+                                         FALSE 
+                      brachytherapy_type_other 
+                                         FALSE 
+                  braf_gene_analysis_indicator 
+                                         FALSE 
+                     braf_gene_analysis_result 
+                                         FALSE 
+                           ca_19_9_level_upper 
+                                         FALSE 
+                                cause_of_death 
+                                         FALSE 
+                         cause_of_death_source 
+                                         FALSE 
+                       chemo_concurrent_course 
+                                         FALSE 
+             chemo_concurrent_reason_not_given 
+                                         FALSE 
+                         chemo_concurrent_type 
+                                         FALSE 
+                   chemo_concurrent_type_other 
+                                         FALSE 
+                     child_pugh_classification 
+                                         FALSE 
+                      clark_level_at_diagnosis 
+                                         FALSE 
+                                    clinical_M 
+                                         FALSE 
+                                    clinical_N 
+                                         FALSE 
+                                clinical_stage 
+                                         FALSE 
+         clinical_status_within_3_mths_surgery 
+                                         FALSE 
+                                    clinical_T 
+                                         FALSE 
+         colon_polyps_at_procurement_indicator 
+                                         FALSE 
+     columnar_metaplasia_goblet_cell_indicator 
+                                         FALSE 
+                      contiguous_organ_invaded 
+                                         FALSE 
+                    contiguous_organ_resection 
+                                         FALSE 
+              contiguous_organ_resection_other 
+                                         FALSE 
+                            corpus_involvement 
+                                         FALSE 
+                 creatinine_level_preresection 
+                                         FALSE 
+                   creatinine_norm_range_lower 
+                                         FALSE 
+                   creatinine_norm_range_upper 
+                                         FALSE 
+                   ct_scan_ab_pelvis_indicator 
+                                         FALSE 
+                     ct_scan_ab_pelvis_results 
+                                         FALSE 
+                         ct_scan_preop_results 
+                                         FALSE 
+                       ct_scan_preop_results.1 
+                                         FALSE 
+                cytogenetics_testing_performed 
+                                         FALSE 
+ cytoplasm_presence_less_than_equal_25_percent 
+                                         FALSE 
+                               cyto_risk_group 
+                                         FALSE 
+                    days_to_bilateral_tumor_dx 
+                                         FALSE 
+                                 days_to_death 
+                                         FALSE 
+              days_to_diagnostic_mri_performed 
+                                         FALSE 
+          days_to_initial_pathologic_diagnosis 
+                                         FALSE 
+                                 death_days_to 
+                                         FALSE 
+                 definitive_surgical_procedure 
+                                         FALSE 
+                  diabetes_diagnosis_indicator 
+                                         FALSE 
+                          diffuse_architecture 
+                                         FALSE 
+                   discontinuous_lesions_count 
+                                         FALSE 
+                 disease_detected_on_screening 
+                                         FALSE 
+                  disease_multifocal_indicator 
+                                         FALSE 
+                                    ecog_score 
+                                         FALSE 
+                     egfr_amplification_status 
+                                         FALSE 
+                 egfr_mutation_identified_type 
+                                         FALSE 
+                          egfr_mutation_status 
+                                         FALSE 
+                 eml4_alk_translocation_status 
+                                         FALSE 
+                     epstein_barr_viral_status 
+                                         FALSE 
+                                  er_ihc_score 
+                                         FALSE 
+                      er_positivity_scale_used 
+                                         FALSE 
+                              er_status_by_ihc 
+                                         FALSE 
+                erythrocyte_sedimentation_rate 
+                                         FALSE 
+            esophageal_tumor_location_centered 
+                                         FALSE 
+            esophageal_tumor_location_involved 
+                                         FALSE 
+           esoph_columnar_metaplasia_indicator 
+                                         FALSE 
+              esoph_non_ca_degree_of_dysplasia 
+                                         FALSE 
+                                     ethnicity 
+                                         FALSE 
+                       extracapsular_extension 
+                                         FALSE 
+               extracapsular_extension_present 
+                                         FALSE 
+               extracapsular_spread_pathologic 
+                                         FALSE 
+                   extranodal_involvment_other 
+                                         FALSE 
+           extranodal_lymphomatous_involvement 
+                                         FALSE 
+                   extranodal_site_involvement 
+                                         FALSE 
+                        extrascleral_extension 
+                                         FALSE 
+                      extrathyroidal_extension 
+                                         FALSE 
+                 extravascular_matrix_patterns 
+                                         FALSE 
+                                     eye_color 
+                                         FALSE 
+                                  fab_category 
+                                         FALSE 
+                    family_history_brain_tumor 
+                                         FALSE 
+               family_history_cancer_indicator 
+                                         FALSE 
+        family_history_cancer_number_relatives 
+                                         FALSE 
+                    family_history_cancer_type 
+                                         FALSE 
+              family_history_colorectal_cancer 
+                                         FALSE 
+            family_history_esoph_gastic_cancer 
+                                         FALSE 
+              family_history_of_stomach_cancer 
+                                         FALSE 
+                   family_history_other_cancer 
+                                         FALSE 
+              family_history_testicular_cancer 
+                                         FALSE 
+                 family_history_thyroid_cancer 
+                                         FALSE 
+                first_symptom_longest_duration 
+                                         FALSE 
+                       first_treatment_success 
+                                         FALSE 
+                     fish_abnormality_detected 
+                                         FALSE 
+                      fish_performed_indicator 
+                                         FALSE 
+                          form_completion_date 
+                                         FALSE 
+                                        gender 
+                                          TRUE 
+                       gene_expression_profile 
+                                         FALSE 
+              genetic_abnormality_method_other 
+                                         FALSE 
+            genetic_abnormality_method_other.1 
+                                         FALSE 
+                 genetic_abnormality_results.1 
+                                         FALSE 
+                    genetic_abnormality_tested 
+                                         FALSE 
+              genetic_abnormality_tested_other 
+                                         FALSE 
+                   genotypic_analysis_detected 
+                                         FALSE 
+              genotypic_analysis_results_other 
+                                         FALSE 
+                       gleason_pattern_primary 
+                                         FALSE 
+                     gleason_pattern_secondary 
+                                         FALSE 
+                      gleason_pattern_tertiary 
+                                         FALSE 
+                                 gleason_score 
+                                         FALSE 
+                             grade_tier_system 
+                                         FALSE 
+                    hemoglobin_24hr_of_banking 
+                                         FALSE 
+                              hemoglobin_level 
+                                         FALSE 
+               hepatic_inflammation_adj_tissue 
+                                         FALSE 
+                   her2_and_cent17_scale_other 
+                                         FALSE 
+                              her2_fish_status 
+                                         FALSE 
+                                her2_ihc_score 
+                                         FALSE 
+                   her2_positivity_scale_other 
+                                         FALSE 
+                            her2_status_by_ihc 
+                                         FALSE 
+                             histological_type 
+                                         FALSE 
+                          histologic_diagnosis 
+                                         FALSE 
+                        histologic_diagnosis.1 
+                                         FALSE 
+                            histologic_subtype 
+                                         FALSE 
+                              histor_hay_fever 
+                                         FALSE 
+                history_adrenal_hormone_excess 
+                                         FALSE 
+                     history_asbestos_exposure 
+                                         FALSE 
+                                history_asthma 
+                                         FALSE 
+         history_barretts_esophageal_indicator 
+                                         FALSE 
+              history_basis_adrenal_hormone_dx 
+                                         FALSE 
+                  history_chronic_pancreatitis 
+                                         FALSE 
+                          history_colon_polyps 
+                                         FALSE 
+                     history_colorectal_cancer 
+                                         FALSE 
+                     history_dust_mold_allergy 
+                                         FALSE 
+                                history_eczema 
+                                         FALSE 
+          history_exposure_leukemogenic_agents 
+                                         FALSE 
+                             history_fertility 
+                                         FALSE 
+                             history_headaches 
+                                         FALSE 
+                  history_hematologic_disorder 
+                                         FALSE 
+         history_hepato_carcinoma_risk_factors 
+                                         FALSE 
+           history_hormonal_contraceptives_use 
+                                         FALSE 
+           history_hpylori_infection_indicator 
+                                         FALSE 
+                           history_hypospadias 
+                                         FALSE 
+     history_if_barretts_goblet_cell_indicator 
+                                         FALSE 
+                 history_immunological_disease 
+                                         FALSE 
+           history_immunological_disease_other 
+                                         FALSE 
+                   history_immunosuppresive_dx 
+                                         FALSE 
+             history_immunosuppressive_disease 
+                                         FALSE 
+            history_immunosuppressive_tx_other 
+                                         FALSE 
+                   history_ionizing_rt_to_head 
+                                         FALSE 
+                history_lgg_dx_of_brain_tissue 
+                                         FALSE 
+            history_menopausal_hormone_therapy 
+                                         FALSE 
+                     history_myasthenia_gravis 
+                                         FALSE 
+            history_neoadjuvant_hydroxyurea_tx 
+                                         FALSE 
+                history_neoadjuvant_medication 
+                                         FALSE 
+                history_neoadjuvant_steroid_tx 
+                                         FALSE 
+                 history_neoadjuvant_treatment 
+                                         FALSE 
+                   history_neoadjuvant_tx_type 
+                                         FALSE 
+                 history_of_undescended_testis 
+                                         FALSE 
+                      history_other_malignancy 
+                                         FALSE 
+                    history_other_malignancy.1 
+                                         FALSE 
+           history_pheo_or_para_include_benign 
+                                         FALSE 
+                    history_radiation_exposure 
+                                         FALSE 
+              history_reflux_disease_indicator 
+                                         FALSE 
+              history_reflux_disease_treatment 
+                                         FALSE 
+                history_relevant_infectious_dx 
+                                         FALSE 
+                              history_seizures 
+                                         FALSE 
+                       history_thyroid_disease 
+                                         FALSE 
+                                hpv_status_ish 
+                                         FALSE 
+                                hpv_status_p16 
+                                         FALSE 
+                               hpv_types_other 
+                                         FALSE 
+                            hpv_types_positive 
+                                         FALSE 
+                             hpv_typing_method 
+                                         FALSE 
+                       hpv_typing_method_other 
+                                         FALSE 
+                            h_pylori_infection 
+                                         FALSE 
+                           hydroxyurea_tx_days 
+                                         FALSE 
+                        hypertension_diagnosis 
+                                         FALSE 
+                             hysterectomy_type 
+                                         FALSE 
+               i_131_radiation_first_tx_method 
+                                         FALSE 
+                 i_131_radiation_subsequent_tx 
+                                         FALSE 
+                                        icd_10 
+                                         FALSE 
+                             icd_o_3_histology 
+                                         FALSE 
+                                  icd_o_3_site 
+                                         FALSE 
+                           idh1_mutation_found 
+                                         FALSE 
+                  idh1_mutation_test_indicator 
+                                         FALSE 
+                     idh1_mutation_test_method 
+                                         FALSE 
+             ifn_tx_90_days_prior_to_resection 
+                                         FALSE 
+                                  igcccg_stage 
+                                         FALSE 
+                           igh_genotype_result 
+                                         FALSE 
+          incidental_prostate_cancer_indicator 
+                                         FALSE 
+          inherited_genetic_syndrome_indicator 
+                                         FALSE 
+          inherited_genetic_syndrome_specified 
+                                         FALSE 
+          initial_diagnosis_esophageal_ca_type 
+                                         FALSE 
+           initial_pathologic_diagnosis_method 
+                                         FALSE 
+                    initial_pathologic_dx_year 
+                                         FALSE 
+               intratubular_germ_cell_neoplasm 
+                                         FALSE 
+                     invasion_of_tumor_capsule 
+                                         FALSE 
+             invasive_adenocarcinoma_indicator 
+                                         FALSE 
+                          ishak_fibrosis_score 
+                                         FALSE 
+                               karnofsky_score 
+                                         FALSE 
+                  keratinization_squamous_cell 
+                                         FALSE 
+                  kras_gene_analysis_indicator 
+                                         FALSE 
+                           kras_mutation_codon 
+                                         FALSE 
+                           kras_mutation_found 
+                                         FALSE 
+                                    laterality 
+                                         FALSE 
+                                     ldh_level 
+                                         FALSE 
+                          ldh_norm_range_upper 
+                                         FALSE 
+              leiomyo_major_vessel_involvement 
+                                         FALSE 
+            leiomyosarcoma_uterine_involvement 
+                                         FALSE 
+                          level_of_non_descent 
+                                         FALSE 
+                      location_lung_parenchyma 
+                                         FALSE 
+                           loci_abnormal_count 
+                                         FALSE 
+                             loci_tested_count 
+                                         FALSE 
+             locoregional_recurrence_indicator 
+                                         FALSE 
+                  lymph_node_dissection_method 
+                                         FALSE 
+                lymph_node_dissection_method.1 
+                                         FALSE 
+          lymph_node_neck_dissection_indicator 
+                                         FALSE 
+                  lymph_nodes_aortic_pos_by_he 
+                                         FALSE 
+                 lymph_nodes_aortic_pos_by_ihc 
+                                         FALSE 
+                  lymph_nodes_aortic_pos_total 
+                                         FALSE 
+                          lymph_nodes_examined 
+                                         FALSE 
+                    lymph_nodes_examined_count 
+                                         FALSE 
+                 lymph_nodes_examined_he_count 
+                                         FALSE 
+                lymph_nodes_examined_ihc_count 
+                                         FALSE 
+                 lymph_nodes_examined_positive 
+                                         FALSE 
+                 lymph_nodes_pelvic_pos__by_he 
+                                         FALSE 
+                 lymph_nodes_pelvic_pos_by_ihc 
+                                         FALSE 
+                  lymph_nodes_pelvic_pos_total 
+                                         FALSE 
+           lymph_node_sprd_radiograph_evidence 
+                                         FALSE 
+                     lymph_nodes_preop_imaging 
+                                         FALSE 
+                   lymph_nodes_supraclavicular 
+                                         FALSE 
+                       lymphovascular_invasion 
+                                         FALSE 
+             lymphovascular_invasion_indicator 
+                                         FALSE 
+               lymphovascular_invasion_present 
+                                         FALSE 
+                    lymphovascular_involvement 
+                                         FALSE 
+malignant_neoplasm_metastatic_involvement_site 
+                                         FALSE 
+                 margins_involved_hysterectomy 
+                                         FALSE 
+                                 margin_status 
+                                         FALSE 
+                      margin_status_reexcision 
+                                         FALSE 
+                                 masaoka_stage 
+                                         FALSE 
+                              menopause_status 
+                                         FALSE 
+                 mesothelioma_detection_method 
+                                         FALSE 
+                metamyelocytes_24hr_of_banking 
+                                         FALSE 
+                               metastasis_site 
+                                         FALSE 
+                         metastasis_site_other 
+                                         FALSE 
+                  metastatic_disease_confirmed 
+                                         FALSE 
+                    metastatic_dx_confirmed_by 
+                                         FALSE 
+              metastatic_dx_confirmed_by_other 
+                                         FALSE 
+                         metastatic_site_other 
+                                         FALSE 
+                    metastatic_tumor_indicator 
+                                         FALSE 
+                         metastatic_tumor_site 
+                                         FALSE 
+                       metastatic_tumor_site.1 
+                                         FALSE 
+                        method_initial_path_dx 
+                                         FALSE 
+                  method_initial_path_dx_other 
+                                         FALSE 
+                  mib_1_positive_percent_range 
+                                         FALSE 
+                     micromet_detection_by_ihc 
+                                         FALSE 
+                    microsatellite_instability 
+                                         FALSE 
+                mismatch_rep_proteins_loss_ihc 
+                                         FALSE 
+           mismatch_rep_proteins_tested_by_ihc 
+                                         FALSE 
+                                  mitotic_rate 
+                                         FALSE 
+                molecular_abnormality_detected 
+                                         FALSE 
+            molecular_studies_others_performed 
+                                         FALSE 
+           mpnst_nf1_genetic_testing_indicator 
+                                         FALSE 
+                 mpnst_nf_familial_or_sporadic 
+                                         FALSE 
+                            mpnst_nf_indicator 
+                                         FALSE 
+             mpnst_plexiform_neurofibroma_site 
+                                         FALSE 
+                              mri_at_diagnosis 
+                                         FALSE 
+                                   mri_results 
+                                         FALSE 
+                                      necrosis 
+                                         FALSE 
+                     neoplasm_histologic_grade 
+                                         FALSE 
+                  new_tumor_event_dx_indicator 
+                                         FALSE 
+                new_tumor_event_melanoma_count 
+                                         FALSE 
+            new_tumor_event_prior_to_bcr_tumor 
+                                         FALSE 
+                noninvasive_bladder_ca_tx_type 
+                                         FALSE 
+                   noninvasive_bladder_history 
+                                         FALSE 
+                        nte_cent_17_her2_ratio 
+                                         FALSE 
+                                 nte_er_status 
+                                         FALSE 
+                   nte_er_status_ihc__positive 
+                                         FALSE 
+                 nte_her2_positivity_ihc_score 
+                                         FALSE 
+                               nte_her2_status 
+                                         FALSE 
+                          nte_pr_status_by_ihc 
+                                         FALSE 
+                          nuclear_grade_III_IV 
+                                         FALSE 
+                 number_of_relatives_diagnosed 
+                                         FALSE 
+       number_of_relatives_with_stomach_cancer 
+                                         FALSE 
+                       other_hysterectomy_type 
+                                         FALSE 
+               other_immunosuppressive_disease 
+                                         FALSE 
+                       other_pos_node_location 
+                                         FALSE 
+                                  pathologic_N 
+                                         FALSE 
+                                  pathologic_T 
+                                         FALSE 
+                    patient_to_undergo_surgery 
+                                         FALSE 
+               performance_status_other_timing 
+                                         FALSE 
+                     performance_status_timing 
+                                         FALSE 
+                           perineural_invasion 
+                                         FALSE 
+                            peritoneal_washing 
+                                         FALSE 
+                    pharmaceutical_tx_adjuvant 
+                                         FALSE 
+                    pharm_tx_mitotane_adjuvant 
+                                         FALSE 
+           pharm_tx_mitotane_for_macro_disease 
+                                         FALSE 
+                   pharm_tx_mitotane_indicator 
+                                         FALSE 
+          pharm_tx_mitotane_theraputic_at_prog 
+                                         FALSE 
+           pharm_tx_mitotane_theraputic_at_rec 
+                                         FALSE 
+           pharm_tx_mitotane_theraputic_levels 
+                                         FALSE 
+            pharm_tx_mitotane_theraputic_macro 
+                                         FALSE 
+                                platelet_count 
+                                         FALSE 
+                     platelet_norm_range_lower 
+                                         FALSE 
+                     platelet_norm_range_upper 
+                                         FALSE 
+                 pleurodesis_performed_90_days 
+                                         FALSE 
+                   pleurodesis_performed_prior 
+                                         FALSE 
+                       pos_lymph_node_location 
+                                         FALSE 
+                              postoperative_tx 
+                                         FALSE 
+              post_orchi_lymph_node_dissection 
+                                         FALSE 
+                       post_orchi_testosterone 
+                                         FALSE 
+                     pregnancies_count_ectopic 
+                                         FALSE 
+            pregnancies_count_induced_abortion 
+                                         FALSE 
+                 pregnancies_count_miscarriage 
+                                         FALSE 
+                  pregnancies_count_stillbirth 
+                                         FALSE 
+                   pregnancies_full_term_count 
+                                         FALSE 
+                         pregnant_at_diagnosis 
+                                         FALSE 
+                           primary_at_dx_count 
+                                         FALSE 
+                     primary_melanoma_known_dx 
+                                         FALSE 
+             primary_melanoma_tumor_ulceration 
+                                         FALSE 
+                        primary_multiple_at_dx 
+                                         FALSE 
+                            primary_occupation 
+                                         FALSE 
+                prolymphocytes_24hr_of_banking 
+                                         FALSE 
+                        prospective_collection 
+                                         FALSE 
+           prothrombin_time_INR_at_procurement 
+                                         FALSE 
+             prothrombin_time_norm_range_upper 
+                                         FALSE 
+            prothrom_time_INR_norm_range_lower 
+                                         FALSE 
+             pr_positivity_ihc_intensity_score 
+                                         FALSE 
+                      pr_positivity_scale_used 
+                                         FALSE 
+                              pr_status_by_ihc 
+                                         FALSE 
+             pulmonary_function_test_indicator 
+                                         FALSE 
+                                          race 
+                                         FALSE 
+       radiation_therapy_dose_paraaortic_nodes 
+                                         FALSE 
+                    radiation_therapy_xrt_dose 
+                                         FALSE 
+             radiation_therapy_xrt_method_prep 
+                                         FALSE 
+                    radiation_therapy_xrt_type 
+                                         FALSE 
+                  radiation_treatment_adjuvant 
+                                         FALSE 
+                          radiation_type_other 
+                                         FALSE 
+                           ras_mutation_result 
+                                         FALSE 
+                 related_symptom_first_present 
+                                         FALSE 
+         related_tumors_outside_adrenal_glands 
+                                         FALSE 
+                    relation_testicular_cancer 
+                                         FALSE 
+               residual_disease_largest_nodule 
+                                         FALSE 
+                                residual_tumor 
+                                         FALSE 
+                  ret_ptc_rearrangement_result 
+                                         FALSE 
+                      retrospective_collection 
+                                         FALSE 
+                    rt_tx_reason_not_completed 
+                                         FALSE 
+              rt_tx_reason_not_completed_other 
+                                         FALSE 
+                          sarcomatoid_features 
+                                         FALSE 
+                  sarcomatoid_percent_of_tumor 
+                                         FALSE 
+                     section_myasthenia_gravis 
+                                         FALSE 
+                serum_albumin_norm_range_lower 
+                                         FALSE 
+                serum_albumin_norm_range_upper 
+                                         FALSE 
+                           serum_calcium_level 
+                                         FALSE 
+                                 serum_markers 
+                                         FALSE 
+                  serum_mesothelin_lower_limit 
+                                         FALSE 
+                     serum_mesothelin_prior_tx 
+                                         FALSE 
+                  serum_mesothelin_upper_limit 
+                                         FALSE 
+                             sinusoid_invasion 
+                                         FALSE 
+              specimen_non_node_tumor_deposits 
+                                         FALSE 
+                          submitted_tumor_site 
+                                         FALSE 
+                        submitted_tumor_site.1 
+                                         FALSE 
+                   supratentorial_localization 
+                                         FALSE 
+                  surgery_for_positive_margins 
+                                         FALSE 
+                surgical_approach_at_diagnosis 
+                                         FALSE 
+                            surgical_procedure 
+                                         FALSE 
+                      surgical_procedure_first 
+                                         FALSE 
+                      surgical_procedure_other 
+                                         FALSE 
+                    symp_changes_mental_status 
+                                         FALSE 
+                   symp_changes_motor_movement 
+                                         FALSE 
+                          symp_changes_sensory 
+                                         FALSE 
+                           symp_changes_visual 
+                                         FALSE 
+               synovial_ss18ssx_testing_method 
+                                         FALSE 
+                                system_version 
+                                         FALSE 
+                    targeted_molecular_therapy 
+                                         FALSE 
+                      testis_tumor_macroextent 
+                                         FALSE 
+                testis_tumor_macroextent_other 
+                                         FALSE 
+                      testis_tumor_microextent 
+                                         FALSE 
+                            tissue_source_site 
+                                         FALSE 
+             tobacco_smoking_history_indicator 
+                                         FALSE 
+             tobacco_smoking_pack_years_smoked 
+                                         FALSE 
+                  tobacco_smoking_year_started 
+                                         FALSE 
+                  tobacco_smoking_year_stopped 
+                                         FALSE 
+                treatment_outcome_first_course 
+                                         FALSE 
+          treatment_prior_to_surgery_indicator 
+                                         FALSE 
+                       tumor_basal_diameter_mx 
+                                         FALSE 
+                                tumor_focality 
+                                         FALSE 
+                                   tumor_grade 
+                                         FALSE 
+                tumor_infiltrating_lymphocytes 
+                                         FALSE 
+                                   tumor_level 
+                                         FALSE 
+                   tumor_morphology_percentage 
+                                         FALSE 
+                                tumor_response 
+                                         FALSE 
+              tumor_sample_procurement_country 
+                                         FALSE 
+               tumor_shape_pathologic_clinical 
+                                         FALSE 
+                                    tumor_site 
+                                         FALSE 
+                                  tumor_status 
+                                         FALSE 
+                   tumor_thickness_measurement 
+                                         FALSE 
+                             tumor_tissue_site 
+                                         FALSE 
+                             tumor_total_depth 
+                                         FALSE 
+                          tumor_total_necrosis 
+                                         FALSE 
+                                    tumor_type 
+                                         FALSE 
+                  undescended_testis_corrected 
+                                         FALSE 
+              undescended_testis_corrected_age 
+                                         FALSE 
+                undescended_testis_method_left 
+                                         FALSE 
+                             vascular_invasion 
+                                         FALSE 
+                   vascular_invasion_indicator 
+                                         FALSE 
+                                  vital_status 
+                                          TRUE 
+                           weiss_score_overall 
+                                         FALSE 
+                         weiss_venous_invasion 
+                                         FALSE 
+           well_diff_liposarc_prior_dx_days_to 
+                                         FALSE 
+         well_diff_liposarc_prior_dx_indicator 
+                                         FALSE 
+          well_diff_liposarc_resection_days_to 
+                                         FALSE 
+                              white_cell_count 
+                                         FALSE 
+          year_of_initial_pathologic_diagnosis 
+                                         FALSE 
+                                zone_of_origin 
+                                         FALSE 
+> mat[touse,]
+             [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12]
+gender       TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE  TRUE  TRUE  TRUE
+vital_status TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE  TRUE  TRUE  TRUE
+             [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23]
+gender        TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+vital_status  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+             [,24] [,25] [,26] [,27] [,28] [,29] [,30] [,31] [,32]
+gender        TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+vital_status  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+> rownames (mat)[touse]  #Muestra los nombres de las cabeceras q estan en todos los ficheros
+[1] "gender"       "vital_status"
+> 
+> for (fi in ficheros) {
++   nombres <- unlist (strsplit (readLines (fi)[1], split = "\t"))
++   datos0 <- read.table (fi, header = TRUE, sep = "\t", quote = "", col.names = nombres, as.is = TRUE, na.strings = "[Not Available]", skip = 3)
++     #Con esto miramos cuantas columnas de las presentes en todos los datos tenemos hasta ahora
++   table (colnames(datos0) %in% rownames (mat)[touse])
++   mantener <- colnames(datos0) %in% rownames (mat)[touse]
++   #Y las guardamos
++   datos0 <- datos0[mantener]
++   ##Hasta aqui
++   
++   print (dim (datos0))
++   tablist[[fi]] <- datos0
++   
++   #Con este bucle guardamos en una lista todos los datos que hay en cada fichero
++ }
+[1] 199   2
+[1] 91  2
+[1] 359   2
+[1] 1077    2
+[1] 303   2
+[1] 34  2
+[1] 452   2
+[1] 45  2
+[1] 171   2
+[1] 591   2
+[1] 515   2
+[1] 109   2
+[1] 530   2
+[1] 260   2
+[1] 458   2
+[1] 359   2
+[1] 491   2
+[1] 72  2
+[1] 586   2
+[1] 170   2
+[1] 178   2
+[1] 469   2
+[1] 170   2
+[1] 247   2
+[1] 438   2
+[1] 451   2
+[1] 130   2
+[1] 504   2
+[1] 116   2
+[1] 532   2
+[1] 56  2
+[1] 73  2
+> 
+> 
+> 
+> summary(tablist)
+                                                                                                  Length
+genome.wustl.edu_LAML.bio.Level_2.0.1.0/nationwidechildrens.org_clinical_patient_laml.txt         2     
+nationwidechildrens.org_ACC.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_acc.txt   2     
+nationwidechildrens.org_BLCA.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_blca.txt 2     
+nationwidechildrens.org_BRCA.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_brca.txt 2     
+nationwidechildrens.org_CESC.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_cesc.txt 2     
+nationwidechildrens.org_CHOL.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_chol.txt  2     
+nationwidechildrens.org_COAD.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_coad.txt 2     
+nationwidechildrens.org_DLBC.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_dlbc.txt 2     
+nationwidechildrens.org_ESCA.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_esca.txt 2     
+nationwidechildrens.org_GBM.bio.Level_2.0.23.0/nationwidechildrens.org_clinical_patient_gbm.txt   2     
+nationwidechildrens.org_HNSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_hnsc.txt 2     
+nationwidechildrens.org_KICH.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kich.txt 2     
+nationwidechildrens.org_KIRC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kirc.txt 2     
+nationwidechildrens.org_KIRP.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_kirp.txt 2     
+nationwidechildrens.org_LGG.bio.Level_2.0.27.0/nationwidechildrens.org_clinical_patient_lgg.txt   2     
+nationwidechildrens.org_LIHC.bio.Level_2.0.35.0/nationwidechildrens.org_clinical_patient_lihc.txt 2     
+nationwidechildrens.org_LUSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_lusc.txt 2     
+nationwidechildrens.org_MESO.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_meso.txt 2     
+nationwidechildrens.org_OV.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_ov.txt     2     
+nationwidechildrens.org_PAAD.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_paad.txt 2     
+nationwidechildrens.org_PCPG.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_pcpg.txt 2     
+nationwidechildrens.org_PRAD.bio.Level_2.0.33.0/nationwidechildrens.org_clinical_patient_prad.txt 2     
+nationwidechildrens.org_READ.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_read.txt 2     
+nationwidechildrens.org_SARC.bio.Level_2.0.28.0/nationwidechildrens.org_clinical_patient_sarc.txt 2     
+nationwidechildrens.org_SKCM.bio.Level_2.0.31.0/nationwidechildrens.org_clinical_patient_skcm.txt 2     
+nationwidechildrens.org_STAD.bio.Level_2.0.29.0/nationwidechildrens.org_clinical_patient_stad.txt 2     
+nationwidechildrens.org_TGCT.bio.Level_2.0.12.0/nationwidechildrens.org_clinical_patient_tgct.txt 2     
+nationwidechildrens.org_THCA.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_thca.txt 2     
+nationwidechildrens.org_THYM.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_thym.txt  2     
+nationwidechildrens.org_UCEC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_ucec.txt 2     
+nationwidechildrens.org_UCS.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_ucs.txt   2     
+nationwidechildrens.org_UVM.bio.Level_2.0.11.0/nationwidechildrens.org_clinical_patient_uvm.txt   2     
+                                                                                                  Class     
+genome.wustl.edu_LAML.bio.Level_2.0.1.0/nationwidechildrens.org_clinical_patient_laml.txt         data.frame
+nationwidechildrens.org_ACC.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_acc.txt   data.frame
+nationwidechildrens.org_BLCA.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_blca.txt data.frame
+nationwidechildrens.org_BRCA.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_brca.txt data.frame
+nationwidechildrens.org_CESC.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_cesc.txt data.frame
+nationwidechildrens.org_CHOL.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_chol.txt  data.frame
+nationwidechildrens.org_COAD.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_coad.txt data.frame
+nationwidechildrens.org_DLBC.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_dlbc.txt data.frame
+nationwidechildrens.org_ESCA.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_esca.txt data.frame
+nationwidechildrens.org_GBM.bio.Level_2.0.23.0/nationwidechildrens.org_clinical_patient_gbm.txt   data.frame
+nationwidechildrens.org_HNSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_hnsc.txt data.frame
+nationwidechildrens.org_KICH.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kich.txt data.frame
+nationwidechildrens.org_KIRC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kirc.txt data.frame
+nationwidechildrens.org_KIRP.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_kirp.txt data.frame
+nationwidechildrens.org_LGG.bio.Level_2.0.27.0/nationwidechildrens.org_clinical_patient_lgg.txt   data.frame
+nationwidechildrens.org_LIHC.bio.Level_2.0.35.0/nationwidechildrens.org_clinical_patient_lihc.txt data.frame
+nationwidechildrens.org_LUSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_lusc.txt data.frame
+nationwidechildrens.org_MESO.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_meso.txt data.frame
+nationwidechildrens.org_OV.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_ov.txt     data.frame
+nationwidechildrens.org_PAAD.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_paad.txt data.frame
+nationwidechildrens.org_PCPG.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_pcpg.txt data.frame
+nationwidechildrens.org_PRAD.bio.Level_2.0.33.0/nationwidechildrens.org_clinical_patient_prad.txt data.frame
+nationwidechildrens.org_READ.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_read.txt data.frame
+nationwidechildrens.org_SARC.bio.Level_2.0.28.0/nationwidechildrens.org_clinical_patient_sarc.txt data.frame
+nationwidechildrens.org_SKCM.bio.Level_2.0.31.0/nationwidechildrens.org_clinical_patient_skcm.txt data.frame
+nationwidechildrens.org_STAD.bio.Level_2.0.29.0/nationwidechildrens.org_clinical_patient_stad.txt data.frame
+nationwidechildrens.org_TGCT.bio.Level_2.0.12.0/nationwidechildrens.org_clinical_patient_tgct.txt data.frame
+nationwidechildrens.org_THCA.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_thca.txt data.frame
+nationwidechildrens.org_THYM.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_thym.txt  data.frame
+nationwidechildrens.org_UCEC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_ucec.txt data.frame
+nationwidechildrens.org_UCS.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_ucs.txt   data.frame
+nationwidechildrens.org_UVM.bio.Level_2.0.11.0/nationwidechildrens.org_clinical_patient_uvm.txt   data.frame
+                                                                                                  Mode
+genome.wustl.edu_LAML.bio.Level_2.0.1.0/nationwidechildrens.org_clinical_patient_laml.txt         list
+nationwidechildrens.org_ACC.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_acc.txt   list
+nationwidechildrens.org_BLCA.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_blca.txt list
+nationwidechildrens.org_BRCA.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_brca.txt list
+nationwidechildrens.org_CESC.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_cesc.txt list
+nationwidechildrens.org_CHOL.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_chol.txt  list
+nationwidechildrens.org_COAD.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_coad.txt list
+nationwidechildrens.org_DLBC.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_dlbc.txt list
+nationwidechildrens.org_ESCA.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_esca.txt list
+nationwidechildrens.org_GBM.bio.Level_2.0.23.0/nationwidechildrens.org_clinical_patient_gbm.txt   list
+nationwidechildrens.org_HNSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_hnsc.txt list
+nationwidechildrens.org_KICH.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kich.txt list
+nationwidechildrens.org_KIRC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_kirc.txt list
+nationwidechildrens.org_KIRP.bio.Level_2.0.32.0/nationwidechildrens.org_clinical_patient_kirp.txt list
+nationwidechildrens.org_LGG.bio.Level_2.0.27.0/nationwidechildrens.org_clinical_patient_lgg.txt   list
+nationwidechildrens.org_LIHC.bio.Level_2.0.35.0/nationwidechildrens.org_clinical_patient_lihc.txt list
+nationwidechildrens.org_LUSC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_lusc.txt list
+nationwidechildrens.org_MESO.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_meso.txt list
+nationwidechildrens.org_OV.bio.Level_2.0.21.0/nationwidechildrens.org_clinical_patient_ov.txt     list
+nationwidechildrens.org_PAAD.bio.Level_2.0.34.0/nationwidechildrens.org_clinical_patient_paad.txt list
+nationwidechildrens.org_PCPG.bio.Level_2.0.25.0/nationwidechildrens.org_clinical_patient_pcpg.txt list
+nationwidechildrens.org_PRAD.bio.Level_2.0.33.0/nationwidechildrens.org_clinical_patient_prad.txt list
+nationwidechildrens.org_READ.bio.Level_2.0.20.0/nationwidechildrens.org_clinical_patient_read.txt list
+nationwidechildrens.org_SARC.bio.Level_2.0.28.0/nationwidechildrens.org_clinical_patient_sarc.txt list
+nationwidechildrens.org_SKCM.bio.Level_2.0.31.0/nationwidechildrens.org_clinical_patient_skcm.txt list
+nationwidechildrens.org_STAD.bio.Level_2.0.29.0/nationwidechildrens.org_clinical_patient_stad.txt list
+nationwidechildrens.org_TGCT.bio.Level_2.0.12.0/nationwidechildrens.org_clinical_patient_tgct.txt list
+nationwidechildrens.org_THCA.bio.Level_2.0.24.0/nationwidechildrens.org_clinical_patient_thca.txt list
+nationwidechildrens.org_THYM.bio.Level_2.0.3.0/nationwidechildrens.org_clinical_patient_thym.txt  list
+nationwidechildrens.org_UCEC.bio.Level_2.0.19.0/nationwidechildrens.org_clinical_patient_ucec.txt list
+nationwidechildrens.org_UCS.bio.Level_2.0.22.0/nationwidechildrens.org_clinical_patient_ucs.txt   list
+nationwidechildrens.org_UVM.bio.Level_2.0.11.0/nationwidechildrens.org_clinical_patient_uvm.txt   list
+> 
+> #Guardamos en excel
+> setwd ("/home/jmendieta/Documents/revision_mirnas/datos/procesados")
+> 
+> library (xlsx)
+Loading required package: rJava
+Loading required package: xlsxjars
+> 
+> ####Con esto guardamos en hojas diferentes
+> 
+> primeraVuelta <- TRUE
+> for (fi in ficheros) {
++   if (primeraVuelta == TRUE) {
++     #En la primera vuelta guardamos el primer fichero 
++     write.xlsx2(x = tablist[[fi]], file = "tabla_clinicos.xlsx",
++                sheetName = fi, col.names = TRUE, row.names = FALSE)
++     #Y guardamos el orden de las columnas de este fichero
++     ordencol <- colnames(tablist[[fi]])
++     primeraVuelta <- FALSE
++   }
++   else {
++     #Con esto guardamos las demas tablas
++     write.xlsx2(x = tablist[[fi]][c(ordencol)], file = "tabla_clinicos.xlsx",
++                sheetName = fi, col.names = TRUE, row.names = FALSE, append = TRUE)
++   } 
++ }
+> 
+> #Con esto se guardaria todo, pero da error por diferente numero de lineas en cada fi
+> #write.xlsx2(x = tablist, file = "tabla_clinicos2.xlsx",
+> #           sheetName = fi, col.names = TRUE, row.names = FALSE)
+> 
+> 
+> 
+> ####Guardar todo en la misma hoja
+> library(XLConnect)
+Loading required package: XLConnectJars
+XLConnect 0.2-11 by Mirai Solutions GmbH [aut],
+  Martin Studer [cre],
+  The Apache Software Foundation [ctb, cph] (Apache POI, Apache Commons
+    Codec),
+  Stephen Colebourne [ctb, cph] (Joda-Time Java library)
+http://www.mirai-solutions.com ,
+http://miraisolutions.wordpress.com
+
+Attaching package: ‘XLConnect’
+
+The following objects are masked from ‘package:xlsx’:
+
+    createFreezePane, createSheet, createSplitPane, getCellStyle,
+    getSheets, loadWorkbook, removeSheet, saveWorkbook, setCellStyle,
+    setColumnWidth, setRowHeight
+
+> 
+> 
+> primeraVuelta <- TRUE
+> for (fi in ficheros) {
++   if (primeraVuelta == TRUE) {
++     #En la primera vuelta guardamos el primer fichero
++     write.xlsx2(x = t(colnames(tablist[[fi]])), file = "tabla_clinicos2.xlsx",
++                 sheetName = "Datos", col.names = FALSE, row.names = FALSE)
++     wb <- loadWorkbook( "tabla_clinicos2.xlsx" )
++     appendWorksheet( wb, data = fi, sheet = "Datos" ) 
++     appendWorksheet( wb, data = tablist[[fi]], sheet = "Datos" ) 
++     #Guardamos el orden de las columnas de este fichero
++     ordencol <- colnames(tablist[[fi]])
++     primeraVuelta <- FALSE
++   }
++   else {
++     #Con esto guardamos las demas tablas
++     appendWorksheet( wb, data = fi, sheet = "Datos" ) 
++     appendWorksheet( wb, data = tablist[[fi]][c(ordencol)], sheet = "Datos" ) 
++     
++   } 
++ }
+> saveWorkbook( wb )
+> 
+> 
+> help(merge)
+merge                   package:base                   R Documentation
+
+_M_e_r_g_e _T_w_o _D_a_t_a _F_r_a_m_e_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Merge two data frames by common columns or row names, or do other
+     versions of database _join_ operations.
+
+_U_s_a_g_e:
+
+     merge(x, y, ...)
+     
+     ## Default S3 method:
+     merge(x, y, ...)
+     
+     ## S3 method for class 'data.frame'
+     merge(x, y, by = intersect(names(x), names(y)),
+           by.x = by, by.y = by, all = FALSE, all.x = all, all.y = all,
+           sort = TRUE, suffixes = c(".x",".y"),
+           incomparables = NULL, ...)
+     
+_A_r_g_u_m_e_n_t_s:
+
+    x, y: data frames, or objects to be coerced to one.
+
+by, by.x, by.y: specifications of the columns used for merging.  See
+          ‘Details’.
+
+     all: logical; ‘all = L’ is shorthand for ‘all.x = L’ and ‘all.y =
+          L’, where ‘L’ is either ‘TRUE’ or ‘FALSE’.
+
+   all.x: logical; if ‘TRUE’, then extra rows will be added to the
+          output, one for each row in ‘x’ that has no matching row in
+          ‘y’.  These rows will have ‘NA’s in those columns that are
+          usually filled with values from ‘y’.  The default is ‘FALSE’,
+          so that only rows with data from both ‘x’ and ‘y’ are
+          included in the output.
+
+   all.y: logical; analogous to ‘all.x’.
+
+    sort: logical.  Should the result be sorted on the ‘by’ columns?
+
+suffixes: a character vector of length 2 specifying the suffixes to be
+          used for making unique the names of columns in the result
+          which not used for merging (appearing in ‘by’ etc).
+
+incomparables: values which cannot be matched.  See ‘match’.  This is
+          intended to be used for merging on one column, so these are
+          incomparable values of that column.
+
+     ...: arguments to be passed to or from methods.
+
+_D_e_t_a_i_l_s:
+
+     ‘merge’ is a generic function whose principal method is for data
+     frames: the default method coerces its arguments to data frames
+     and calls the ‘"data.frame"’ method.
+
+     By default the data frames are merged on the columns with names
+     they both have, but separate specifications of the columns can be
+     given by ‘by.x’ and ‘by.y’.  The rows in the two data frames that
+     match on the specified columns are extracted, and joined together.
+     If there is more than one match, all possible matches contribute
+     one row each.  For the precise meaning of ‘match’, see ‘match’.
+
+     Columns to merge on can be specified by name, number or by a
+     logical vector: the name ‘"row.names"’ or the number ‘0’ specifies
+     the row names.  If specified by name it must correspond uniquely
+     to a named column in the input.
+
+     If ‘by’ or both ‘by.x’ and ‘by.y’ are of length 0 (a length zero
+     vector or ‘NULL’), the result, ‘r’, is the _Cartesian product_ of
+     ‘x’ and ‘y’, i.e., ‘dim(r) = c(nrow(x)*nrow(y), ncol(x) +
+     ncol(y))’.
+
+     If ‘all.x’ is true, all the non matching cases of ‘x’ are appended
+     to the result as well, with ‘NA’ filled in the corresponding
+     columns of ‘y’; analogously for ‘all.y’.
+
+     If the columns in the data frames not used in merging have any
+     common names, these have ‘suffixes’ (‘".x"’ and ‘".y"’ by default)
+     appended to try to make the names of the result unique.  If this
+     is not possible, an error is thrown.
+
+     The complexity of the algorithm used is proportional to the length
+     of the answer.
+
+     In SQL database terminology, the default value of ‘all = FALSE’
+     gives a _natural join_, a special case of an _inner join_.
+     Specifying ‘all.x = TRUE’ gives a _left (outer) join_, ‘all.y =
+     TRUE’ a _right (outer) join_, and both (‘all = TRUE’ a _(full)
+     outer join_.  DBMSes do not match ‘NULL’ records, equivalent to
+     ‘incomparables = NA’ in R.
+
+_V_a_l_u_e:
+
+     A data frame.  The rows are by default lexicographically sorted on
+     the common columns, but for ‘sort = FALSE’ are in an unspecified
+     order.  The columns are the common columns followed by the
+     remaining columns in ‘x’ and then those in ‘y’.  If the matching
+     involved row names, an extra character column called ‘Row.names’
+     is added at the left, and in all cases the result has ‘automatic’
+     row names.
+
+_N_o_t_e:
+
+     This is intended to work with data frames with vector-like
+     columns: some aspects work with data frames containing matrices,
+     but not all.
+
+     Currently long vectors are not accepted for inputs, which are thus
+     restricted to less than 2^31 rows, and that restriction also
+     applies to the result.
+
+_S_e_e _A_l_s_o:
+
+     ‘data.frame’, ‘by’, ‘cbind’.
+
+     ‘dendrogram’ for a class which has a ‘merge’ method.
+
+_E_x_a_m_p_l_e_s:
+
+     ## use character columns of names to get sensible sort order
+     authors <- data.frame(
+         surname = I(c("Tukey", "Venables", "Tierney", "Ripley", "McNeil")),
+         nationality = c("US", "Australia", "US", "UK", "Australia"),
+         deceased = c("yes", rep("no", 4)))
+     books <- data.frame(
+         name = I(c("Tukey", "Venables", "Tierney",
+                  "Ripley", "Ripley", "McNeil", "R Core")),
+         title = c("Exploratory Data Analysis",
+                   "Modern Applied Statistics ...",
+                   "LISP-STAT",
+                   "Spatial Statistics", "Stochastic Simulation",
+                   "Interactive Data Analysis",
+                   "An Introduction to R"),
+         other.author = c(NA, "Ripley", NA, NA, NA, NA,
+                          "Venables & Smith"))
+     
+     (m1 <- merge(authors, books, by.x = "surname", by.y = "name"))
+     (m2 <- merge(books, authors, by.x = "name", by.y = "surname"))
+     stopifnot(as.character(m1[, 1]) == as.character(m2[, 1]),
+               all.equal(m1[, -1], m2[, -1][ names(m1)[-1] ]),
+               dim(merge(m1, m2, by = integer(0))) == c(36, 10))
+     
+     ## "R core" is missing from authors and appears only here :
+     merge(authors, books, by.x = "surname", by.y = "name", all = TRUE)
+     
+     ## example of using 'incomparables'
+     x <- data.frame(k1 = c(NA,NA,3,4,5), k2 = c(1,NA,NA,4,5), data = 1:5)
+     y <- data.frame(k1 = c(NA,2,NA,4,5), k2 = c(NA,NA,3,4,5), data = 1:5)
+     merge(x, y, by = c("k1","k2")) # NA's match
+     merge(x, y, by = "k1") # NA's match, so 6 rows
+     merge(x, y, by = "k2", incomparables = NA) # 2 rows
+     
+
+> 
+> proc.time()
+   user  system elapsed 
+ 54.279   3.544 356.465 
