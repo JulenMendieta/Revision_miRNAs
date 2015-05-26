@@ -1,0 +1,156 @@
+
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## e030_estadistica_columnas_datos_clinicos.r
+> ## 2015-03-26 julenmendieta92@gmail.com
+> ## Script para revisar los datos clinicos generados en "e010_tabla_datos_clinicos.r" y ver que columnas hay y su presencia en cada estudio
+> date ()
+[1] "Tue May 26 10:53:03 2015"
+> Sys.info ()[c("nodename", "user")]
+   nodename        user 
+   "crom01" "jmendieta" 
+> commandArgs ()
+[1] "/opt/soft/libs/R/3.1.2_atlas/lib64/R/bin/exec/R"
+[2] "-f"                                             
+[3] "e030_estadistica_columnas_datos_clinicos.r"     
+[4] "--restore"                                      
+[5] "--save"                                         
+[6] "--no-readline"                                  
+> rm (list = ls ())
+> R.version.string ##"R version 3.2.0 (2015-04-16)"
+[1] "R version 3.1.2 (2014-10-31)"
+> 
+> try (source (".job.r")); try (.job)
+
+.job.r has been sourced
+
+$name
+[1] "tcga_download"
+
+$dir
+$dir$data
+[1] "~/datos/2015/tcga_download"
+
+$dir$code
+[1] "~/trabajos/2015/tcga_download"
+
+$dir$scripts
+[1] "~/trabajos/2015/tcga_download/scripts"
+
+$dir$docs
+[1] "~/trabajos/2015/tcga_download/documents"
+
+$dir$raw
+[1] "~/datos/2015/tcga_download/data_raw"
+
+$dir$annotation
+[1] "~/datos/2015/tcga_download/data_annotation"
+
+$dir$proces
+[1] "~/datos/2015/tcga_download/data_processed"
+
+$dir$plots
+[1] "~/datos/2015/tcga_download/results/plots"
+
+$dir$res
+[1] "~/datos/2015/tcga_download/results/files"
+
+
+$testmode
+[1] FALSE
+
+$dec
+[1] "."
+
+$idsep
+[1] " /// "
+
+> 
+> options (width = 170)
+> #options (width = 1000)
+> 
+> setwd (file.path (.job$dir$proces))
+> 
+> load (file.path (.job$dir$proces, "clinical_info_all.RData"))
+> lnombres <- list()
+> for (id in names (datosClinicos)) {
++   datos0 <- datosClinicos[[id]]
++  
++   #Quitamos los datos en los que todo sea NA
++   todo.na <- apply (is.na (datos0), 2, all)
++   table (todo.na)
++   datos0 <- datos0[,!todo.na]  
++   #Guardamos en lon cuantos datos diferentes hay en cada cabecera   
++   lon <- apply (datos0, 2, function (x) length (setdiff (unique (x), NA)))  
++   table (lon)
++   nombres <- colnames(datos0)   #Con esto miramos todas las cabeceras que han permanecido hasta ahora
++   lnombres[[id]] <- nombres     #Guardamos las cabeceras que hay asociadas al nombre del fichero en lnombres
++ }
+> 
+> 
+> nu <- sort (unique (unlist (lnombres)))   #Guardamos en una lista todas las cabeceras de columnas que hay sin repetirlas
+> mat <- matrix (NA, nrow = length (nu), ncol = length (datosClinicos))  #Creamos una matriz vacia con numero de filas igual a cabeceras posibles y en las columnas el nombre del fichero
+> rownames (mat) <- nu  #Llamamos a las filas de mat como las cabeceras
+> colnames (mat) <- names(datosClinicos)  #A las columnas como los ficheros
+> 
+> #Con el bucle guardamos un T o F dependiendo de si en el fichero hay una cabecera que se llame como fila[cabecera] de la matriz
+> for (id in names (datosClinicos)) {
++   mat[,id] <- rownames (mat) %in% lnombres[[id]]
++ }
+> mat[1:3,]
+                                   LAML   ACC  BLCA  BRCA  CESC  CHOL  COAD  DLBC  ESCA   GBM  HNSC  KICH  KIRC  KIRP   LGG  LIHC  LUAD  LUSC  MESO    OV  PAAD  PCPG
+ablation_embolization_tx_adjuvant FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+abnormal_lymphocyte_percent        TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+age_at_diagnosis                   TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+                                   PRAD  READ  SARC  SKCM  STAD  TGCT  THCA  THYM  UCEC   UCS   UVM
+ablation_embolization_tx_adjuvant FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
+abnormal_lymphocyte_percent       FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+age_at_diagnosis                  FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE
+> dim (mat)
+[1] 653  33
+> table (rowSums (mat))  #Esto nos muestra cuantas cabeceras hay solo en x ficheros (cuantas en 1, cuantas en 2, cuantas en 4 etc.)
+
+  1   2   3   4   5   6   7   8  10  11  12  13  14  15  16  17  19  21  22  26  28  31  32  33 
+459  88  29  11   5   5   2   2   5   3   1   1   3   1   2   1   1   5   2   1   4   1  10  11 
+> ###De aqui guardamos la matriz mat, ya que de ella se extrae cuantas columnas hay en cada fichero
+> save (list = "mat", file = file.path (.job$dir$proces, "estadistica_columnas_datos_clinicos.RData"))
+> 
+> # colnames (mat) <- NULL
+> # touse <- rowSums (mat) == length(datosClinicos) #Guardamos solo las cabeceras que esten en todos los ficheros
+> # touse
+> # mat[touse,]
+> # rownames (mat)[touse]  #Muestra los nombres de las cabeceras q estan en todos los ficheros
+> 
+> ###EXIT
+> warnings ()
+NULL
+> sessionInfo ()
+R version 3.1.2 (2014-10-31)
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+> q ("no")
+> proc.time()
+   user  system elapsed 
+  1.208   0.052   1.609 

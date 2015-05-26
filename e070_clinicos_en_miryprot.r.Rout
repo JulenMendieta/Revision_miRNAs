@@ -1,0 +1,704 @@
+
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## d070_clinicos_en_miryprot.r
+> ## 2015-03-26 julenmendieta92@gmail.com
+> ##Modificado: 2015-05-21
+> ## Script para generar una tabla con el contenido de los ficheros "clinical_patient" (No esta presente en todos los canceres)
+> date ()
+[1] "Tue May 26 10:53:59 2015"
+> Sys.info ()[c("nodename", "user")]
+   nodename        user 
+   "crom01" "jmendieta" 
+> commandArgs ()
+[1] "/opt/soft/libs/R/3.1.2_atlas/lib64/R/bin/exec/R"
+[2] "-f"                                             
+[3] "e070_clinicos_en_miryprot.r"                    
+[4] "--restore"                                      
+[5] "--save"                                         
+[6] "--no-readline"                                  
+> rm (list = ls ())
+> R.version.string ##"R version 3.2.0 (2015-04-16)"
+[1] "R version 3.1.2 (2014-10-31)"
+> 
+> try (source (".job.r")); try (.job)
+
+.job.r has been sourced
+
+$name
+[1] "tcga_download"
+
+$dir
+$dir$data
+[1] "~/datos/2015/tcga_download"
+
+$dir$code
+[1] "~/trabajos/2015/tcga_download"
+
+$dir$scripts
+[1] "~/trabajos/2015/tcga_download/scripts"
+
+$dir$docs
+[1] "~/trabajos/2015/tcga_download/documents"
+
+$dir$raw
+[1] "~/datos/2015/tcga_download/data_raw"
+
+$dir$annotation
+[1] "~/datos/2015/tcga_download/data_annotation"
+
+$dir$proces
+[1] "~/datos/2015/tcga_download/data_processed"
+
+$dir$plots
+[1] "~/datos/2015/tcga_download/results/plots"
+
+$dir$res
+[1] "~/datos/2015/tcga_download/results/files"
+
+
+$testmode
+[1] FALSE
+
+$dec
+[1] "."
+
+$idsep
+[1] " /// "
+
+> 
+> options (width = 170)
+> #options (width = 1000)
+> 
+> setwd (file.path (.job$dir$proces))
+> 
+> 
+> #Ahora le añadimos los datos
+> 
+> load (file.path (.job$dir$proces, "tabla_clinicos_muestra.RData"))   #Con esto cargamamos datos
+> load (file.path (.job$dir$proces, "miR_exp.RData"))  #Con esto cargamos miR.exp.info y mir.exp
+> load (file.path (.job$dir$proces, "prot_exp.RData"))  #Con esto cargamos  prot.exp.info y prot.exp
+> 
+> tag <- names(miR.exp)
+> #Primero dejamos solo al referencia al paciente en los barcodes de miR.exp
+> for (t in tag) {
++   barcode <- colnames(miR.exp[[t]])
++   colnames(miR.exp[[t]]) <- sub("-...-...-....-..", "", barcode)
++ }
+> 
+> 
+> ##Luego creamos dos columnas en datos donde incluiremos TRUE o FALSE dependiendo de que haya datos de esa muestra para miR o prot
+> #Como no tenemos datos clinicos de todos los tags, cambiamos la variable tag a los tags de los que si tenemos estos datos
+> tag <- names(datos)
+> for (t in tag) {
++   datos[[t]][, c("prot.expr", "miR.expr")] <- FALSE
++ }
+> 
+> for (t in tag) {
++   for (i in 1:nrow(datos[[t]])) {
++     if (datos[[t]][i, "patient"] %in% colnames(miR.exp[[t]])) {
++       datos[[t]]["miR.expr"] <- TRUE
++     }
++     if (datos[[t]][i, "bcr_shipment_portion_uuid"] %in% colnames(prot.exp[[t]])) {
++       datos[[t]]["prot.expr"] <- TRUE
++     }
++   }
++   print (t)
++   print(table(datos[[t]]["prot.expr"]==TRUE))
++   print(table(datos[[t]]["miR.expr"]==TRUE))
++ }
+[1] "ACC"
+
+TRUE 
+  46 
+
+TRUE 
+  46 
+[1] "BLCA"
+
+TRUE 
+ 344 
+
+TRUE 
+ 344 
+[1] "BRCA"
+
+TRUE 
+1063 
+
+TRUE 
+1063 
+[1] "CESC"
+
+TRUE 
+ 173 
+
+TRUE 
+ 173 
+[1] "CHOL"
+
+TRUE 
+  30 
+
+TRUE 
+  30 
+[1] "COAD"
+
+TRUE 
+ 429 
+
+TRUE 
+ 429 
+[1] "DLBC"
+
+TRUE 
+  33 
+
+TRUE 
+  33 
+[1] "ESCA"
+
+TRUE 
+ 126 
+
+TRUE 
+ 126 
+[1] "GBM"
+
+TRUE 
+ 244 
+
+FALSE 
+  244 
+[1] "HNSC"
+
+TRUE 
+ 357 
+
+TRUE 
+ 357 
+[1] "KICH"
+
+TRUE 
+  63 
+
+TRUE 
+  63 
+[1] "KIRC"
+
+TRUE 
+ 478 
+
+TRUE 
+ 478 
+[1] "KIRP"
+
+TRUE 
+ 216 
+
+TRUE 
+ 216 
+[1] "LGG"
+
+TRUE 
+ 435 
+
+TRUE 
+ 435 
+[1] "LIHC"
+
+FALSE 
+  184 
+
+TRUE 
+ 184 
+[1] "LUAD"
+
+TRUE 
+ 365 
+
+TRUE 
+ 365 
+[1] "LUSC"
+
+TRUE 
+ 328 
+
+TRUE 
+ 328 
+[1] "MESO"
+
+TRUE 
+  63 
+
+TRUE 
+  63 
+[1] "OV"
+
+TRUE 
+ 656 
+
+TRUE 
+ 656 
+[1] "PAAD"
+
+TRUE 
+ 123 
+
+TRUE 
+ 123 
+[1] "PCPG"
+
+TRUE 
+  82 
+
+TRUE 
+  82 
+[1] "PRAD"
+
+TRUE 
+ 352 
+
+TRUE 
+ 352 
+[1] "READ"
+
+TRUE 
+ 164 
+
+TRUE 
+ 164 
+[1] "SARC"
+
+TRUE 
+ 227 
+
+TRUE 
+ 227 
+[1] "SKCM"
+
+TRUE 
+ 355 
+
+TRUE 
+ 355 
+[1] "STAD"
+
+TRUE 
+ 392 
+
+TRUE 
+ 392 
+[1] "TGCT"
+
+TRUE 
+ 122 
+
+TRUE 
+ 122 
+[1] "THCA"
+
+TRUE 
+ 381 
+
+TRUE 
+ 381 
+[1] "THYM"
+
+TRUE 
+  90 
+
+TRUE 
+  90 
+[1] "UCEC"
+
+FALSE 
+  440 
+
+TRUE 
+ 440 
+[1] "UCS"
+
+TRUE 
+  48 
+
+TRUE 
+  48 
+[1] "UVM"
+
+TRUE 
+  12 
+
+TRUE 
+  12 
+> #Hasta aqui ya tenemos una tabla con todos los datos clínicos, el tipo de muestra, y que indica si tiene datos de expresión de miR y prot
+> 
+> #Creamos una data.frame en la que los datos de cada tumor estan al mismo nivel
+> tags <- names (datos)
+> mat <- NULL
+> for (ta in tags) {
++   dt <- datos[[ta]]
++   dt[,"tag"] <- ta
++   mat <- rbind (mat, dt)
++ }
+> dim (mat)  
+[1] 8421   18
+> mat[1:3,]
+  bcr_sample_barcode shipment_portion_bcr_aliquot_barcode            bcr_shipment_portion_uuid      patient   sample_type                     bcr_patient_uuid gender
+1   TCGA-OR-A5J2-01A          TCGA-OR-A5J2-01A-21-A39K-20 F9762BBB-BCA0-4B54-A2C8-6F81A91DE22F TCGA-OR-A5J2 Primary Tumor 8E7C2E31-D085-4B75-A970-162526DD07A0 FEMALE
+2   TCGA-OR-A5J3-01A          TCGA-OR-A5J3-01A-21-A39K-20 21AB5BC5-D822-4C70-BAD0-1E390A55456E TCGA-OR-A5J3 Primary Tumor DFD687BC-6E69-42F7-AF94-D17FC150D1A1 FEMALE
+3   TCGA-OR-A5J6-01A          TCGA-OR-A5J6-01A-41-A39K-20 BBE6AF7B-BCDD-4179-94E2-2978AF7A03A4 TCGA-OR-A5J6 Primary Tumor C8898B42-B704-45A0-9829-144B98F416E0 FEMALE
+                       race          ethnicity history_other_malignancy history_neoadjuvant_treatment vital_status informed_consent_verified patient_id
+1                     WHITE HISPANIC OR LATINO                       No                            No         Dead                       YES       A5J2
+2                     WHITE HISPANIC OR LATINO                       No                            No        Alive                       YES       A5J3
+3 BLACK OR AFRICAN AMERICAN HISPANIC OR LATINO                       No                            No        Alive                       YES       A5J6
+  tissue_source_site prot.expr miR.expr tag
+1                 OR      TRUE     TRUE ACC
+2                 OR      TRUE     TRUE ACC
+3                 OR      TRUE     TRUE ACC
+> 
+> summary (mat)
+ bcr_sample_barcode shipment_portion_bcr_aliquot_barcode bcr_shipment_portion_uuid   patient          sample_type        bcr_patient_uuid      gender         
+ Length:8421        Length:8421                          Length:8421               Length:8421        Length:8421        Length:8421        Length:8421       
+ Class :character   Class :character                     Class :character          Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character                     Mode  :character          Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                                                                                                              
+     race            ethnicity         history_other_malignancy history_neoadjuvant_treatment vital_status       informed_consent_verified  patient_id       
+ Length:8421        Length:8421        Length:8421              Length:8421                   Length:8421        Length:8421               Length:8421       
+ Class :character   Class :character   Class :character         Class :character              Class :character   Class :character          Class :character  
+ Mode  :character   Mode  :character   Mode  :character         Mode  :character              Mode  :character   Mode  :character          Mode  :character  
+                                                                                                                                                             
+ tissue_source_site prot.expr        miR.expr           tag           
+ Length:8421        Mode :logical   Mode :logical   Length:8421       
+ Class :character   FALSE:624       FALSE:244       Class :character  
+ Mode  :character   TRUE :7797      TRUE :8177      Mode  :character  
+                    NA's :0         NA's :0                           
+> save (list = "mat", file = file.path (.job$dir$proces, "clinicos_miryprot.RData"))
+> 
+> #Eliminamos los pacientes que not engan datos de miR y prot
+> touse <- mat[,"prot.expr"] & mat[, "miR.expr"]
+> table (touse)
+touse
+FALSE  TRUE 
+  868  7553 
+> mat <- mat[touse,]
+> 
+> #Miramos los tipos de muestras tomadas, solo hay 45 de tejido normal.
+> t (t (table (mat[,"sample_type"])))
+                          
+                           [,1]
+  Additional - New Primary    6
+  Additional Metastatic       1
+  Metastatic                274
+  Primary Tumor            7205
+  Recurrent Tumor            22
+  Solid Tissue Normal        45
+> 
+> #Miramos a que tumor pertenecen las muestras de tejido sano
+> st <- mat[,"sample_type"] == "Solid Tissue Normal"
+> table (st)
+st
+FALSE  TRUE 
+ 7508    45 
+> mat[st,]
+     bcr_sample_barcode shipment_portion_bcr_aliquot_barcode            bcr_shipment_portion_uuid      patient         sample_type                     bcr_patient_uuid
+395    TCGA-BH-A1ET-11B          TCGA-BH-A1ET-11B-31-A43O-20 48D344A0-2C10-412C-A51E-BB830474D9D5 TCGA-BH-A1ET Solid Tissue Normal 8986a141-eae7-4157-b695-02cc6fc3b071
+399    TCGA-BH-A1EW-11B          TCGA-BH-A1EW-11B-41-A43O-20 6AC30F47-7622-4DBF-94E9-4E6D93D8442F TCGA-BH-A1EW Solid Tissue Normal 9d166970-07c8-4ca3-9cfa-ed0049df9ecc
+426    TCGA-BH-A1EY-11B          TCGA-BH-A1EY-11B-31-A43O-20 A5047A5B-665D-4C47-ADC8-1DFDF0180130 TCGA-BH-A1EY Solid Tissue Normal 0741b5db-4405-42ba-b63a-c6ee4f341480
+431    TCGA-BH-A1F8-11B          TCGA-BH-A1F8-11B-31-A43O-20 80FD1099-D66E-4A9A-AA9E-CB7D0178D612 TCGA-BH-A1F8 Solid Tissue Normal ee554215-bea2-4268-aaf9-784e68cdb969
+435    TCGA-BH-A1FD-11B          TCGA-BH-A1FD-11B-31-A43O-20 81425ECA-DA4A-428C-BAAE-E3B55821C356 TCGA-BH-A1FD Solid Tissue Normal 3c8b5af9-c34d-43c2-b8c9-39ea11e44fa6
+438    TCGA-BH-A1FE-11B          TCGA-BH-A1FE-11B-21-A43O-20 160198A9-3024-40DF-9887-E20F9371AC0A TCGA-BH-A1FE Solid Tissue Normal 4aa68586-6331-4795-b40c-859386640df6
+445    TCGA-BH-A1FN-11A          TCGA-BH-A1FN-11A-41-A43O-20 BAC42747-AC16-4A8B-A673-236A4F3F0568 TCGA-BH-A1FN Solid Tissue Normal 6dd0dd7b-62ff-4fd1-a99a-b265f1a91dca
+485    TCGA-E9-A1N6-11A          TCGA-E9-A1N6-11A-41-A43O-20 F251633F-A6B6-4238-93A8-6C32EFCA1607 TCGA-E9-A1N6 Solid Tissue Normal 955d4263-61f7-42e8-8a6e-772a0d6c209d
+487    TCGA-E9-A1N8-11A          TCGA-E9-A1N8-11A-51-A43O-20 EFBC87A0-993F-4C1E-9D9A-32C76BCCC13A TCGA-E9-A1N8 Solid Tissue Normal ac075bc0-1b59-4557-beea-541694faee03
+490    TCGA-E9-A1ND-11A          TCGA-E9-A1ND-11A-51-A43O-20 1DFA3ABA-51BC-48FA-B854-39ED4F94E701 TCGA-E9-A1ND Solid Tissue Normal f06f09f3-8133-4a92-ac86-fbe64295e0d8
+519    TCGA-E9-A1N5-11A          TCGA-E9-A1N5-11A-51-A43O-20 0D7A5303-6F45-4910-8BC5-F08E8FC11463 TCGA-E9-A1N5 Solid Tissue Normal f954de05-1b44-4087-8933-6cc72d81028d
+521    TCGA-E9-A1N9-11A          TCGA-E9-A1N9-11A-81-A43O-20 39636744-785B-4D93-8EE5-40D075AEAB71 TCGA-E9-A1N9 Solid Tissue Normal 994ca1f5-ad10-44ec-aa21-71fc2940653b
+523    TCGA-E9-A1NF-11A          TCGA-E9-A1NF-11A-81-A43O-20 DF5927EA-DE81-492A-B1AD-03A0E533A338 TCGA-E9-A1NF Solid Tissue Normal a8b1f6e7-2bcf-460d-b1c6-1792a9801119
+525    TCGA-E9-A1NH-11A          TCGA-E9-A1NH-11A-41-A43O-20 A6417AA5-7E20-4D27-AFCC-306B837B095F TCGA-E9-A1NH Solid Tissue Normal b2aac45b-2073-4c7a-adb9-769a4fdcc111
+558    TCGA-E9-A1NE-11A          TCGA-E9-A1NE-11A-51-A43O-20 233FE7AC-4003-4A6C-80A1-101B561B6842 TCGA-E9-A1NE Solid Tissue Normal 3d676bba-154b-4d22-ab59-d4d4da051b94
+560    TCGA-E9-A1NG-11A          TCGA-E9-A1NG-11A-61-A43O-20 89FE3D24-088B-4F16-82A2-534DB14FF98D TCGA-E9-A1NG Solid Tissue Normal 659b0170-e914-45ff-aa55-fcb8d3dc7b8a
+567    TCGA-BH-A208-11A          TCGA-BH-A208-11A-61-A43O-20 CE2C9C0F-7CD7-4C05-AF2F-85D4552F8183 TCGA-BH-A208 Solid Tissue Normal ddcbdac6-9e43-4146-a611-d033125eba14
+575    TCGA-E9-A1RB-11A          TCGA-E9-A1RB-11A-41-A43O-20 0EFB66E0-3439-4FAE-9B6A-C5D085876AAF TCGA-E9-A1RB Solid Tissue Normal 94b95984-b2fb-4e42-8887-45e7086c3179
+577    TCGA-E9-A1RC-11A          TCGA-E9-A1RC-11A-41-A43O-20 68A3D687-0B01-4BDD-B650-D8D204E65559 TCGA-E9-A1RC Solid Tissue Normal 5cdae21d-eee5-478f-932a-0f51fcf5f031
+579    TCGA-E9-A1RD-11A          TCGA-E9-A1RD-11A-41-A43O-20 738328DA-0CBE-4801-A523-667D56E6A73E TCGA-E9-A1RD Solid Tissue Normal 5fe3c51f-65e2-4da6-8924-a6fae17c022d
+582    TCGA-E9-A1RF-11A          TCGA-E9-A1RF-11A-41-A43O-20 97627951-60EF-4283-940A-9550114962F1 TCGA-E9-A1RF Solid Tissue Normal c694615c-b1c6-499c-8058-995633ebf948
+625    TCGA-BH-A203-11A          TCGA-BH-A203-11A-51-A43O-20 87EB8632-D2C0-4E37-A707-66410942D9A1 TCGA-BH-A203 Solid Tissue Normal b3264748-947a-43aa-b227-b294fbcc8447
+631    TCGA-E9-A1RH-11A          TCGA-E9-A1RH-11A-41-A43O-20 ABDD9B9C-278F-4077-BB4F-5B890D7E58C7 TCGA-E9-A1RH Solid Tissue Normal 408cb583-6dc3-4698-8bd2-e284042bd5ef
+633    TCGA-E9-A1RI-11A          TCGA-E9-A1RI-11A-51-A43O-20 21E8CC9D-962D-4FA5-9814-8134FFA59C51 TCGA-E9-A1RI Solid Tissue Normal dd3bfb26-b534-4917-9c4d-9fe7b6477762
+773    TCGA-A7-A4SA-11A          TCGA-A7-A4SA-11A-51-A43O-20 BF5A86FA-5213-494A-852B-C0782A9A0A56 TCGA-A7-A4SA Solid Tissue Normal A2EFE7E1-ACA3-440F-825F-ED621EDCA69F
+775    TCGA-A7-A4SC-11A          TCGA-A7-A4SC-11A-61-A43O-20 325798E1-709A-4A61-AF20-E1E85844CF20 TCGA-A7-A4SC Solid Tissue Normal EC0AB947-9341-4FFF-BDA4-FDFB9434D508
+777    TCGA-A7-A4SD-11A          TCGA-A7-A4SD-11A-51-A43O-20 3EB15608-D3BE-4E35-89F9-BEF3DFEB60EC TCGA-A7-A4SD Solid Tissue Normal 8C09F413-E938-4F2E-A414-84F0E7FCFE41
+779    TCGA-A7-A4SE-11A          TCGA-A7-A4SE-11A-71-A43O-20 715C8450-EEA3-4C5C-8B9B-D30D994FB08D TCGA-A7-A4SE Solid Tissue Normal DBF6F981-15CC-40AD-91AC-A66360405FBD
+871    TCGA-XX-A899-11A          TCGA-XX-A899-11A-51-A43O-20 A8CECAA2-9F67-4079-8D69-3EA987F4BF69 TCGA-XX-A899 Solid Tissue Normal F89588E9-CA73-4465-A7FB-7246EDB45E3A
+983    TCGA-BH-A0AY-11A          TCGA-BH-A0AY-11A-31-A43O-20 80042D05-76C1-40BE-90E4-5391A86314E9 TCGA-BH-A0AY Solid Tissue Normal 93ed6066-b567-4e1c-ab81-23370f9d3452
+1099   TCGA-BH-A0DK-11A          TCGA-BH-A0DK-11A-21-A43O-20 F17E1810-1E54-4920-A1EA-A5B693205A55 TCGA-BH-A0DK Solid Tissue Normal f2bbfa9d-9a9d-4f46-9fde-378e4c44e2ad
+1101   TCGA-BH-A0DP-11A          TCGA-BH-A0DP-11A-21-A43O-20 6B935910-61A6-4AC5-87EB-D3557C0777E4 TCGA-BH-A0DP Solid Tissue Normal 14267783-5624-4fe5-ba81-9d67f1017474
+1107   TCGA-BH-A0E1-11A          TCGA-BH-A0E1-11A-21-A43O-20 B5FC6749-9A17-4739-9144-FE17660801C3 TCGA-BH-A0E1 Solid Tissue Normal 606fbc6a-b41b-441d-9401-51e54912bf5e
+1117   TCGA-BH-A0HK-11A          TCGA-BH-A0HK-11A-21-A43O-20 9959CAD8-B950-41C0-A0C7-3EF86F4DA9EC TCGA-BH-A0HK Solid Tissue Normal 24334ac1-28a3-4b61-b590-3f51e375b247
+1267   TCGA-BH-A0B7-11A          TCGA-BH-A0B7-11A-41-A43O-20 A353AE14-6488-43F1-A9D1-BBD0C66D0814 TCGA-BH-A0B7 Solid Tissue Normal 214a4507-d974-4b3e-8525-7408fccc6a0f
+1352   TCGA-BH-A18L-11A          TCGA-BH-A18L-11A-51-A43O-20 AE6873BA-EA4A-4FE3-9D4F-B32FFC5BBF98 TCGA-BH-A18L Solid Tissue Normal 9ddc3e7b-8b54-4a83-8335-8053940f56c1
+1356   TCGA-BH-A18N-11A          TCGA-BH-A18N-11A-51-A43O-20 3A6CFBA6-849B-416F-A652-F3540DEBEB02 TCGA-BH-A18N Solid Tissue Normal 665dd3d3-779c-4abd-b5d7-13342340451d
+1358   TCGA-BH-A18P-11A          TCGA-BH-A18P-11A-51-A43O-20 5C2F7AFD-3F6E-46BB-A17B-F10BE5E243FC TCGA-BH-A18P Solid Tissue Normal 557cb0a3-6f1b-4faf-8296-0a15c24158f9
+1361   TCGA-BH-A18Q-11A          TCGA-BH-A18Q-11A-41-A43O-20 E36930F3-2442-4C58-B426-DC2C0CDCB79D TCGA-BH-A18Q Solid Tissue Normal db4bc6aa-2e7d-4bcb-8519-a455f624d33b
+1364   TCGA-BH-A18R-11A          TCGA-BH-A18R-11A-51-A43O-20 0F909B7E-B7B3-4B79-B3E6-31BAAFFFA9C6 TCGA-BH-A18R Solid Tissue Normal f6e1ec78-5ad9-4879-9b7e-262d17b166ad
+1372   TCGA-BH-A18V-11A          TCGA-BH-A18V-11A-61-A43O-20 1D76CB85-A291-45F8-88B0-29D72E04FA07 TCGA-BH-A18V Solid Tissue Normal 6b960b58-28e1-41c6-bd6e-7e669c6aa4ef
+1401   TCGA-A7-A13E-11A          TCGA-A7-A13E-11A-71-A43O-20 E408026E-6C07-4F2E-A609-29F21E997938 TCGA-A7-A13E Solid Tissue Normal 8c7e74e0-71ef-49b8-9217-94b8ef740ef9
+1404   TCGA-A7-A13F-11A          TCGA-A7-A13F-11A-51-A43O-20 2F10F1D9-54A0-42EB-B9B7-C9733D431824 TCGA-A7-A13F Solid Tissue Normal 2cf68894-168b-458b-af4f-53cad72989a8
+1433   TCGA-BH-A0BZ-11A          TCGA-BH-A0BZ-11A-71-A43O-20 C3371B54-7D2D-4868-B8EF-E5C0466B0172 TCGA-BH-A0BZ Solid Tissue Normal 4a032bad-e726-48f2-8f39-e3acc109cc91
+1442   TCGA-BH-A0HA-11A          TCGA-BH-A0HA-11A-41-A43O-20 4DD09312-C6DE-4532-811D-242BAAE47F9D TCGA-BH-A0HA Solid Tissue Normal e666081b-caaf-4e8b-9446-807be71201a5
+     gender                      race              ethnicity history_other_malignancy history_neoadjuvant_treatment vital_status informed_consent_verified patient_id
+395  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1ET
+399  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1EW
+426  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1EY
+431  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1F8
+435  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1FD
+438  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1FE
+445  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A1FN
+485  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1N6
+487  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1N8
+490  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1ND
+519  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1N5
+521  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1N9
+523  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1NF
+525  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1NH
+558  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1NE
+560  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1NG
+567  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A208
+575  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1RB
+577  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1RC
+579  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1RD
+582  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1RF
+625  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A203
+631  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1RH
+633  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A1RI
+773  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A4SA
+775  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A4SC
+777  FEMALE BLACK OR AFRICAN AMERICAN NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A4SD
+779  FEMALE BLACK OR AFRICAN AMERICAN NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A4SE
+871  FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A899
+983  FEMALE                     WHITE                   <NA>                       No                            No        Alive                       YES       A0AY
+1099 FEMALE                     WHITE                   <NA>                       No                            No        Alive                       YES       A0DK
+1101 FEMALE                     WHITE                   <NA>                       No                            No        Alive                       YES       A0DP
+1107 FEMALE                     WHITE                   <NA>                       No                            No        Alive                       YES       A0E1
+1117 FEMALE                     WHITE                   <NA>                       No                            No        Alive                       YES       A0HK
+1267 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A0B7
+1352 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A18L
+1356 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A18N
+1358 FEMALE                     WHITE                   <NA>                       No                            No         Dead                       YES       A18P
+1361 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A18Q
+1364 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A18R
+1372 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No         Dead                       YES       A18V
+1401 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A13E
+1404 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A13F
+1433 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A0BZ
+1442 FEMALE                     WHITE NOT HISPANIC OR LATINO                       No                            No        Alive                       YES       A0HA
+     tissue_source_site prot.expr miR.expr  tag
+395                  BH      TRUE     TRUE BRCA
+399                  BH      TRUE     TRUE BRCA
+426                  BH      TRUE     TRUE BRCA
+431                  BH      TRUE     TRUE BRCA
+435                  BH      TRUE     TRUE BRCA
+438                  BH      TRUE     TRUE BRCA
+445                  BH      TRUE     TRUE BRCA
+485                  E9      TRUE     TRUE BRCA
+487                  E9      TRUE     TRUE BRCA
+490                  E9      TRUE     TRUE BRCA
+519                  E9      TRUE     TRUE BRCA
+521                  E9      TRUE     TRUE BRCA
+523                  E9      TRUE     TRUE BRCA
+525                  E9      TRUE     TRUE BRCA
+558                  E9      TRUE     TRUE BRCA
+560                  E9      TRUE     TRUE BRCA
+567                  BH      TRUE     TRUE BRCA
+575                  E9      TRUE     TRUE BRCA
+577                  E9      TRUE     TRUE BRCA
+579                  E9      TRUE     TRUE BRCA
+582                  E9      TRUE     TRUE BRCA
+625                  BH      TRUE     TRUE BRCA
+631                  E9      TRUE     TRUE BRCA
+633                  E9      TRUE     TRUE BRCA
+773                  A7      TRUE     TRUE BRCA
+775                  A7      TRUE     TRUE BRCA
+777                  A7      TRUE     TRUE BRCA
+779                  A7      TRUE     TRUE BRCA
+871                  XX      TRUE     TRUE BRCA
+983                  BH      TRUE     TRUE BRCA
+1099                 BH      TRUE     TRUE BRCA
+1101                 BH      TRUE     TRUE BRCA
+1107                 BH      TRUE     TRUE BRCA
+1117                 BH      TRUE     TRUE BRCA
+1267                 BH      TRUE     TRUE BRCA
+1352                 BH      TRUE     TRUE BRCA
+1356                 BH      TRUE     TRUE BRCA
+1358                 BH      TRUE     TRUE BRCA
+1361                 BH      TRUE     TRUE BRCA
+1364                 BH      TRUE     TRUE BRCA
+1372                 BH      TRUE     TRUE BRCA
+1401                 A7      TRUE     TRUE BRCA
+1404                 A7      TRUE     TRUE BRCA
+1433                 BH      TRUE     TRUE BRCA
+1442                 BH      TRUE     TRUE BRCA
+> table (mat[st, "tag"])
+
+BRCA 
+  45 
+> 
+> #Comprobamos que para un mismo paciente tengamos muestras tanto de tejido sano como enfermo.
+> pacientes <- mat[st, "patient"] 
+> buenos<- mat[,"patient"] %in% pacientes 
+> table (mat[buenos, "patient"])
+
+TCGA-A7-A13E TCGA-A7-A13F TCGA-A7-A4SA TCGA-A7-A4SC TCGA-A7-A4SD TCGA-A7-A4SE TCGA-BH-A0AY TCGA-BH-A0B7 TCGA-BH-A0BZ TCGA-BH-A0DK TCGA-BH-A0DP TCGA-BH-A0E1 TCGA-BH-A0HA 
+           2            3            2            2            2            2            3            3            3            2            2            3            2 
+TCGA-BH-A0HK TCGA-BH-A18L TCGA-BH-A18N TCGA-BH-A18P TCGA-BH-A18Q TCGA-BH-A18R TCGA-BH-A18V TCGA-BH-A1ET TCGA-BH-A1EW TCGA-BH-A1EY TCGA-BH-A1F8 TCGA-BH-A1FD TCGA-BH-A1FE 
+           3            2            3            2            3            3            4            2            2            2            2            2            3 
+TCGA-BH-A1FN TCGA-BH-A203 TCGA-BH-A208 TCGA-E9-A1N5 TCGA-E9-A1N6 TCGA-E9-A1N8 TCGA-E9-A1N9 TCGA-E9-A1ND TCGA-E9-A1NE TCGA-E9-A1NF TCGA-E9-A1NG TCGA-E9-A1NH TCGA-E9-A1RB 
+           2            2            2            2            2            2            2            2            2            2            2            2            2 
+TCGA-E9-A1RC TCGA-E9-A1RD TCGA-E9-A1RF TCGA-E9-A1RH TCGA-E9-A1RI TCGA-XX-A899 
+           2            2            2            2            2            2 
+> table (mat[buenos, "sample_type"])
+
+         Metastatic       Primary Tumor Solid Tissue Normal 
+                  2                  55                  45 
+> 
+> mat[buenos, c("patient", "sample_type")]
+          patient         sample_type
+394  TCGA-BH-A1ET       Primary Tumor
+395  TCGA-BH-A1ET Solid Tissue Normal
+398  TCGA-BH-A1EW       Primary Tumor
+399  TCGA-BH-A1EW Solid Tissue Normal
+425  TCGA-BH-A1EY       Primary Tumor
+426  TCGA-BH-A1EY Solid Tissue Normal
+430  TCGA-BH-A1F8       Primary Tumor
+431  TCGA-BH-A1F8 Solid Tissue Normal
+434  TCGA-BH-A1FD       Primary Tumor
+435  TCGA-BH-A1FD Solid Tissue Normal
+436  TCGA-BH-A1FE       Primary Tumor
+437  TCGA-BH-A1FE          Metastatic
+438  TCGA-BH-A1FE Solid Tissue Normal
+444  TCGA-BH-A1FN       Primary Tumor
+445  TCGA-BH-A1FN Solid Tissue Normal
+484  TCGA-E9-A1N6       Primary Tumor
+485  TCGA-E9-A1N6 Solid Tissue Normal
+486  TCGA-E9-A1N8       Primary Tumor
+487  TCGA-E9-A1N8 Solid Tissue Normal
+489  TCGA-E9-A1ND       Primary Tumor
+490  TCGA-E9-A1ND Solid Tissue Normal
+518  TCGA-E9-A1N5       Primary Tumor
+519  TCGA-E9-A1N5 Solid Tissue Normal
+520  TCGA-E9-A1N9       Primary Tumor
+521  TCGA-E9-A1N9 Solid Tissue Normal
+522  TCGA-E9-A1NF       Primary Tumor
+523  TCGA-E9-A1NF Solid Tissue Normal
+524  TCGA-E9-A1NH       Primary Tumor
+525  TCGA-E9-A1NH Solid Tissue Normal
+557  TCGA-E9-A1NE       Primary Tumor
+558  TCGA-E9-A1NE Solid Tissue Normal
+559  TCGA-E9-A1NG       Primary Tumor
+560  TCGA-E9-A1NG Solid Tissue Normal
+566  TCGA-BH-A208       Primary Tumor
+567  TCGA-BH-A208 Solid Tissue Normal
+574  TCGA-E9-A1RB       Primary Tumor
+575  TCGA-E9-A1RB Solid Tissue Normal
+576  TCGA-E9-A1RC       Primary Tumor
+577  TCGA-E9-A1RC Solid Tissue Normal
+578  TCGA-E9-A1RD       Primary Tumor
+579  TCGA-E9-A1RD Solid Tissue Normal
+581  TCGA-E9-A1RF       Primary Tumor
+582  TCGA-E9-A1RF Solid Tissue Normal
+624  TCGA-BH-A203       Primary Tumor
+625  TCGA-BH-A203 Solid Tissue Normal
+630  TCGA-E9-A1RH       Primary Tumor
+631  TCGA-E9-A1RH Solid Tissue Normal
+632  TCGA-E9-A1RI       Primary Tumor
+633  TCGA-E9-A1RI Solid Tissue Normal
+772  TCGA-A7-A4SA       Primary Tumor
+773  TCGA-A7-A4SA Solid Tissue Normal
+774  TCGA-A7-A4SC       Primary Tumor
+775  TCGA-A7-A4SC Solid Tissue Normal
+776  TCGA-A7-A4SD       Primary Tumor
+777  TCGA-A7-A4SD Solid Tissue Normal
+778  TCGA-A7-A4SE       Primary Tumor
+779  TCGA-A7-A4SE Solid Tissue Normal
+870  TCGA-XX-A899       Primary Tumor
+871  TCGA-XX-A899 Solid Tissue Normal
+981  TCGA-BH-A0AY       Primary Tumor
+982  TCGA-BH-A0AY       Primary Tumor
+983  TCGA-BH-A0AY Solid Tissue Normal
+1098 TCGA-BH-A0DK       Primary Tumor
+1099 TCGA-BH-A0DK Solid Tissue Normal
+1100 TCGA-BH-A0DP       Primary Tumor
+1101 TCGA-BH-A0DP Solid Tissue Normal
+1105 TCGA-BH-A0E1       Primary Tumor
+1106 TCGA-BH-A0E1       Primary Tumor
+1107 TCGA-BH-A0E1 Solid Tissue Normal
+1115 TCGA-BH-A0HK       Primary Tumor
+1116 TCGA-BH-A0HK       Primary Tumor
+1117 TCGA-BH-A0HK Solid Tissue Normal
+1265 TCGA-BH-A0B7       Primary Tumor
+1266 TCGA-BH-A0B7       Primary Tumor
+1267 TCGA-BH-A0B7 Solid Tissue Normal
+1351 TCGA-BH-A18L       Primary Tumor
+1352 TCGA-BH-A18L Solid Tissue Normal
+1354 TCGA-BH-A18N       Primary Tumor
+1355 TCGA-BH-A18N       Primary Tumor
+1356 TCGA-BH-A18N Solid Tissue Normal
+1357 TCGA-BH-A18P       Primary Tumor
+1358 TCGA-BH-A18P Solid Tissue Normal
+1359 TCGA-BH-A18Q       Primary Tumor
+1360 TCGA-BH-A18Q       Primary Tumor
+1361 TCGA-BH-A18Q Solid Tissue Normal
+1362 TCGA-BH-A18R       Primary Tumor
+1363 TCGA-BH-A18R       Primary Tumor
+1364 TCGA-BH-A18R Solid Tissue Normal
+1369 TCGA-BH-A18V       Primary Tumor
+1370 TCGA-BH-A18V       Primary Tumor
+1371 TCGA-BH-A18V          Metastatic
+1372 TCGA-BH-A18V Solid Tissue Normal
+1400 TCGA-A7-A13E       Primary Tumor
+1401 TCGA-A7-A13E Solid Tissue Normal
+1402 TCGA-A7-A13F       Primary Tumor
+1403 TCGA-A7-A13F       Primary Tumor
+1404 TCGA-A7-A13F Solid Tissue Normal
+1431 TCGA-BH-A0BZ       Primary Tumor
+1432 TCGA-BH-A0BZ       Primary Tumor
+1433 TCGA-BH-A0BZ Solid Tissue Normal
+1441 TCGA-BH-A0HA       Primary Tumor
+1442 TCGA-BH-A0HA Solid Tissue Normal
+> 
+> 
+> 
+> ###EXIT
+> warnings ()
+NULL
+> sessionInfo ()
+R version 3.1.2 (2014-10-31)
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+> q ("no")
+> proc.time()
+   user  system elapsed 
+  5.254   0.281   5.873 
