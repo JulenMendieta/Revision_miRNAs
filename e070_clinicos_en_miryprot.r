@@ -73,12 +73,7 @@ mat <- mat[touse,]
 
 save (list = "mat", file = file.path (.job$dir$proces, "clinicos_miryprot.RData"))
 
-#Miramos los tipos de muestras tomadas, solo hay 45 de tejido normal.
-t (t (table (mat[,"sample_type"])))
 
-#Vamos a buscar el cancer que tenga mas muestras con datos de miR y prot
-table(mat[,"tag"])
-max(table(mat[,"tag"]))  #En este caso vemos que es LGG
 
 
 # #Miramos a que tumor pertenecen las muestras de tejido sano
