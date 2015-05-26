@@ -8,7 +8,9 @@ commandArgs ()
 rm (list = ls ())
 R.version.string ##"R version 3.1.2 (2014-10-31)"
 
-setwd ("/home/jmendieta/Documents/revision_mirnas/datos/raw/clinical")
+try (source (".job.r")); try (.job)
+
+setwd (file.path (.job$dir$raw, "clinical"))
 
 ficheros <- dir (pattern = "clinical_patient", recursive= TRUE)  #Guardamos en ficheros el stream de cada carpeta y los ficheros que contiene
 ficheros
