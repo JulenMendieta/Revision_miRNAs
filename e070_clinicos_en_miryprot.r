@@ -26,7 +26,7 @@ tag <- names(miR.exp)
 #Primero dejamos solo al referencia al paciente en los barcodes de miR.exp
 for (t in tag) {
   barcode <- colnames(miR.exp[[t]])
-  colnames(miR.exp[[t]]) <- sub("-...-...-....-..", "", barcode)
+  colnames(miR.exp[[t]]) <- sub("-...-....-..", "", barcode)
 }
 
 
@@ -39,11 +39,11 @@ for (t in tag) {
 
 for (t in tag) {
   for (i in 1:nrow(datos[[t]])) {
-    if (datos[[t]][i, "patient"] %in% colnames(miR.exp[[t]])) {
-      datos[[t]]["miR.expr"] <- TRUE
+    if (datos[[t]][i, "bcr_sample_barcode"] %in% colnames(miR.exp[[t]]) == TRUE) {
+      datos[[t]][i, "miR.expr"] <- TRUE
     }
-    if (datos[[t]][i, "bcr_shipment_portion_uuid"] %in% colnames(prot.exp[[t]])) {
-      datos[[t]]["prot.expr"] <- TRUE
+    if (datos[[t]][i, "bcr_shipment_portion_uuid"] %in% colnames(prot.exp[[t]]) == TRUE) {
+      datos[[t]][i, "prot.expr"] <- TRUE
     }
   }
   print (t)
@@ -64,29 +64,37 @@ dim (mat)
 mat[1:3,]
 
 summary (mat)
-save (list = "mat", file = file.path (.job$dir$proces, "clinicos_miryprot.RData"))
+
 
 #Eliminamos los pacientes que not engan datos de miR y prot
 touse <- mat[,"prot.expr"] & mat[, "miR.expr"]
 table (touse)
 mat <- mat[touse,]
 
+save (list = "mat", file = file.path (.job$dir$proces, "clinicos_miryprot.RData"))
+
 #Miramos los tipos de muestras tomadas, solo hay 45 de tejido normal.
 t (t (table (mat[,"sample_type"])))
 
-#Miramos a que tumor pertenecen las muestras de tejido sano
-st <- mat[,"sample_type"] == "Solid Tissue Normal"
-table (st)
-mat[st,]
-table (mat[st, "tag"])
+#Vamos a buscar el cancer que tenga mas muestras con datos de miR y prot
+table(mat[,"tag"])
+max(table(mat[,"tag"]))  #En este caso vemos que es LGG
 
-#Comprobamos que para un mismo paciente tengamos muestras tanto de tejido sano como enfermo.
-pacientes <- mat[st, "patient"] 
-buenos<- mat[,"patient"] %in% pacientes 
-table (mat[buenos, "patient"])
-table (mat[buenos, "sample_type"])
 
-mat[buenos, c("patient", "sample_type")]
+# #Miramos a que tumor pertenecen las muestras de tejido sano
+# st <- mat[,"sample_type"] == "Solid Tissue Normal"
+# table (st)
+# mat[st,]
+# table (mat[st, "tag"])
+# 
+# #Comprobamos que para un mismo paciente tengamos muestras tanto de tejido sano como enfermo.
+# pacientes <- mat[st, "patient"] 
+# buenos<- mat[,"patient"] %in% pacientes 
+# table (mat[buenos, "patient"])
+# table (mat[buenos, "sample_type"])
+# 
+# mat[buenos, c("patient", "sample_type")]
+# matriz <- mat[buenos,]
 
 
 
