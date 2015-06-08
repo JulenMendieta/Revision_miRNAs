@@ -1,4 +1,4 @@
-## d080_comparacion_expresion.r
+## e080_comparacion_expresion.r
 ## 2015-03-26 julenmendieta92@gmail.com
 ##Modificado: 2015-05-26
 ## Script para comparar los niveles de expresión
@@ -74,12 +74,17 @@ table (colnames (prots) == rownames (matriz))
 
 matriz[1:3,]
 
+#Se cambia el nombre de las variables y las guardamos
 sinfo <- matriz
 mirna <-miRNAs
 prots
 
 
 ###SAVE
+save (list = "sinfo", file = file.path (.job$dir$proces, "clinicos_miryprot_LGG.RData"))
+save (list = "mirna", file = file.path (.job$dir$proces, "miR_exp_LGG.RData"))
+save (list = "prots", file = file.path (.job$dir$proces, "prot_exp_LGG.RData"))
+
 
 
 
