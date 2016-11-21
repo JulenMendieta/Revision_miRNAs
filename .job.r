@@ -27,16 +27,16 @@
 .job$dir <- list ()
 
 # We save the year to be used later
-year = date ()
-year = unlist(strsplit(year, " "))
-year = year[length(year)]
-suppressWarnings(dir.create(file.path ("/home/biouser/julen", "trabajos", year)))
-suppressWarnings(dir.create(file.path ("/home/biouser/julen", "datos", year)))
-
-### rootDir: Location in MY COMPUTER
 # Line to be changed ###
 user = "/home/user/julen"
 #
+year = date ()
+year = unlist(strsplit(year, " "))
+year = year[length(year)]
+suppressWarnings(dir.create(file.path (user, "trabajos", year)))
+suppressWarnings(dir.create(file.path (user, "datos", year)))
+
+### rootDir: Location in MY COMPUTER
 .job$dir$data <- file.path (user, "datos", year, .job$name) #starting with ("~") if working in your home directory
 suppressWarnings(dir.create(file.path (user, "datos", year, .job$name)))
 .job$dir$code <- file.path (user, "trabajos", year, .job$name) #or ("") if working in the root directory !!!
