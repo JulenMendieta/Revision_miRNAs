@@ -1,6 +1,6 @@
 ## .job.r
 ## 2010-03-09 dmontaner@cipf.es
-## Modificado: 2016-02-08 julenmendieta92@gmail.com
+## Modificado: 2017-02-08 julenmendieta92@gmail.com
 ##    Le voy a añadir lineas para que cree el las carpetas, y así ahorramelo
 ## script that keeps the settings for each job
 ## bear in mind that it is dependent on the data folder structure
@@ -33,14 +33,14 @@ user = "/home/user/julen"
 year = date ()
 year = unlist(strsplit(year, " "))
 year = year[length(year)]
-suppressWarnings(dir.create(file.path (user, "trabajos", year)))
-suppressWarnings(dir.create(file.path (user, "datos", year)))
+if(!file.exists(file.path (user, "trabajos", year))){dir.create(file.path (user, "trabajos", year))}
+if(!file.exists(file.path (user, "datos", year))){dir.create(file.path (user, "datos", year))}
 
 ### rootDir: Location in MY COMPUTER
 .job$dir$data <- file.path (user, "datos", year, .job$name) #starting with ("~") if working in your home directory
-suppressWarnings(dir.create(file.path (user, "datos", year, .job$name)))
+if(!file.exists(file.path (.job$dir$data))){dir.create(file.path (.job$dir$data))}
 .job$dir$code <- file.path (user, "trabajos", year, .job$name) #or ("") if working in the root directory !!!
-suppressWarnings(dir.create(file.path (user, "trabajos", year, .job$name)))
+if(!file.exists(file.path (.job$dir$code))){dir.create(file.path (.job$dir$code))}
 
 # .job$dir$data <- file.path ("~", "Desktop", "papers", .job$name, "datos") #starting with ("~") if working in your home directory
 # .job$dir$code <- file.path ("~", "Desktop", "papers", .job$name) #or ("") if working in the root directory !!!
@@ -53,16 +53,16 @@ suppressWarnings(dir.create(file.path (user, "trabajos", year, .job$name)))
 
 ### MORE directories
 .job$dir$scripts <- file.path (.job$dir$code, "scripts")
-suppressWarnings(dir.create(file.path (.job$dir$code, "scripts")))
+if(!file.exists(file.path (.job$dir$scripts))){dir.create(file.path (.job$dir$scripts))}
 .job$dir$docs    <- file.path (.job$dir$code, "documents")
-suppressWarnings(dir.create(file.path (.job$dir$code, "documents")))
+if(!file.exists(file.path (.job$dir$docs))){dir.create(file.path (.job$dir$docs))}
 
 .job$dir$rawdat      <- file.path (.job$dir$data, "data_raw")
-suppressWarnings(dir.create(file.path (.job$dir$data, "data_raw")))
+if(!file.exists(file.path (.job$dir$rawdat))){dir.create(file.path (.job$dir$rawdat))}
 .job$dir$annotation  <- file.path (.job$dir$data, "data_annotation")
-suppressWarnings(dir.create(file.path (.job$dir$data, "data_annotation")))
+if(!file.exists(file.path (.job$dir$annotation))){dir.create(file.path (.job$dir$annotation))}
 .job$dir$proces      <- file.path (.job$dir$data, "data_processed")
-suppressWarnings(dir.create(file.path (.job$dir$data, "data_processed")))
+if(!file.exists(file.path (.job$dir$proces))){dir.create(file.path (.job$dir$proces))}
 
 #.job$dir$plots  <- file.path (.job$dir$data, "results", "plots")
 #.job$dir$res    <- file.path (.job$dir$data, "results", "files")
